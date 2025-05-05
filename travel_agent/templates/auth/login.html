@@ -1,0 +1,177 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Cholo Uri</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            height: 100vh;
+            background: url("{% static 'images/login.jpg' %}") no-repeat center center/cover;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        body::before {
+            content: '';  
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 0;
+        }
+        .login-card {
+            position: relative;
+            backdrop-filter: blur(12px) brightness(1.2);
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 1rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
+            max-width: 400px;
+            width: 90%;
+            padding: 2rem;
+            color: #fff;
+            z-index: 1;
+        }
+        .login-card h2 {
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        .login-card p {
+            color: #ccc;
+        }
+        .nav-tabs .nav-link {
+            color: #bbb;
+            font-weight: 600;
+        }
+        .nav-tabs .nav-link.active {
+            color: #fff;
+            border-color: #10B981;
+            background: rgba(16, 185, 129, 0.2);
+            border-radius: 0.5rem;
+        }
+        .form-control {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: #fff;
+        }
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        .form-control:focus {
+            background: rgba(255,255,255,0.15);
+            border: 1px solid #10B981;
+            box-shadow: none;
+            color: #fff;
+        }
+        .btn-neon {
+            background: none;
+            border: 2px solid #10B981;
+            color: #10B981;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        .btn-neon:hover {
+            background: #10B981;
+            color: #fff;
+            box-shadow: 0 0 10px #10B981, 0 0 20px #10B981;
+        }
+        .footer-text {
+            font-size: 0.85rem;
+            color: #bbb;
+            text-align: center;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <h2 class="text-center mb-1">Cholo Uri</h2>
+        <p class="text-center mb-4">Your AI-friendly Customer Support Agent</p>
+
+        <!-- error messages -->
+        {% if messages %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert" id="loginMsg">
+            {% for message in messages %}
+                {{ message }}<br>
+            {% endfor %}
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+
+        <ul class="nav nav-tabs mb-3 justify-content-center" id="loginTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="customer-tab" data-bs-toggle="tab" data-bs-target="#customer" type="button" aria-selected="true">Customer</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="owner-tab" data-bs-toggle="tab" data-bs-target="#owner" type="button" aria-selected="false">Shop Owner</button>
+            </li>
+        </ul>
+        <div class="tab-content" id="loginTabContent">
+            <div class="tab-pane fade show active" id="customer" role="tabpanel">
+                <form method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="form_type" value="customer">
+                    <div class="mb-3">
+                        <label for="custEmail" class="form-label">Email address</label>
+                        <input type="email" class="form-control" id="custEmail" name="email" placeholder="you@example.com" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="custPassword" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="custPassword" name="password" placeholder="Password" required>
+                    </div>
+                    <div class="d-grid mb-2">
+                        <button type="submit" class="btn btn-neon">Login as Customer</button>
+                    </div>
+                    <div class="text-end">
+                        <a href="#" class="link-light">Forgot password?</a>
+                    </div>
+                </form>
+            </div>
+            <div class="tab-pane fade" id="owner" role="tabpanel">
+                <form method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="form_type" value="owner">
+                    <div class="mb-3">
+                        <label for="ownerIdentifier" class="form-label">Username or Email</label>
+                        <input type="text" class="form-control" id="ownerIdentifier" name="identifier" placeholder="shopowner01 or email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="ownerPassword" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="ownerPassword" name="password" placeholder="Password" required>
+                    </div>
+                    <div class="d-grid mb-2">
+                        <button type="submit" class="btn btn-neon">Login as Shop Owner</button>
+                    </div>
+                    <div class="text-end">
+                        <a href="#" class="link-light">Forgot password?</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <p class="footer-text">Don't have an account? <a href="{% url 'register' %}" class="link-light">Sign up</a></p>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('#loginTab button').forEach(btn =>
+          btn.addEventListener('click', () => {
+            const alert = document.getElementById('loginMsg');
+            if (alert) alert.remove();
+          })
+        );
+      });
+    </script>
+</body>
+</html>

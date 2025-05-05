@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>{% block title %}Chologhuri Dashboard{% endblock %}</title>
+  <!-- Material Icons CDN -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+
+  <!-- Your CSS -->
+  <style>
+/* styles.css */
+
+/* ─── Root Palette & Scales ───────────────────────────────────────── */
+:root {
+  --color-primary: #030042;
+  --color-primary-dark: #110b5a;
+  --color-accent: #14b8a6;
+  --color-accent-dark: #0f766e;
+  --color-bg: #f9fafb;
+  --color-surface: #ffffff;
+  --color-border: #e5e7eb;
+  --color-text: #1f2937;
+  --color-text-light: #4b5563;
+  --radius: 0.5rem;
+  --transition: 0.3s ease;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+  --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+}
+
+/* ─── Reset & Base ───────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--color-bg);
+  color: var(--color-text);
+  display: flex;
+  min-height: 100vh;
+}
+a { text-decoration: none; color: inherit; }
+button { background: none; border: none; cursor: pointer; }
+
+/* ─── Sidebar ─────────────────────────────────────────────────────── */
+.sidebar {
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  width: 260px;
+  height: 100vh;
+  overflow-y: auto;
+  background: var(--color-surface);
+  border-right: 1px solid var(--color-border);
+  padding-top: 1.5rem;
+  transform: translateX(-100%);
+  transition: transform var(--transition);
+  z-index: 100;
+}
+/* when .open is present, sidebar is visible */
+.sidebar.open {
+  transform: translateX(0);
+}
+
+.sidebar h2 {
+  margin: 0 1rem 2rem;
+  padding: 0.75rem;
+  background: var(--color-primary);
+  color: #fff;
+  border-radius: var(--radius);
+  text-align: center;
+  font-size: 1.5rem;
+}
+
+.sidebar nav ul {
+  list-style: none;
+}
+.sidebar nav li {
+  margin-bottom: 0.25rem;
+}
+.sidebar nav summary,
+.sidebar nav a {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 1rem;
+  border-radius: var(--radius);
+  font-weight: 500;
+  transition: background var(--transition), color var(--transition);
+}
+.sidebar nav summary:hover,
+.sidebar nav a:hover {
+  background: var(--color-primary-light, #c7d2fe);
+  color: var(--color-primary-dark);
+}
+.sidebar details > ul {
+  padding-left: 1.25rem;
+}
+.sidebar details summary::-webkit-details-marker {
+  display: none;
+}
+.sidebar details summary::after {
+  content: '▸';
+  margin-left: auto;
+  transition: transform var(--transition);
+}
+.sidebar details[open] summary::after {
+  transform: rotate(90deg);
+}
+.sidebar .material-icons {
+  font-size: 1.25rem;
+  color: var(--color-text-light);
+}
+
+/* ─── Main Content ───────────────────────────────────────────────── */
+.main {
+  flex: 1;
+  margin-left: 0;
+  padding: 1.5rem;
+  transition: margin-left var(--transition);
+}
+/* when .open is present, push main right by sidebar width */
+.main.open {
+  margin-left: 260px;
+}
+
+/* ─── Topbar & Menu Toggle ───────────────────────────────────────── */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1rem;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  height: 3.5rem;
+}
+
+.menu-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  color: var(--color-primary-dark);
+  background: var(--color-surface);
+  border-radius: var(--radius);
+  padding: 0.25rem;
+  box-shadow: var(--shadow-sm);
+  transition: background var(--transition);
+  margin-right: 1rem;
+  z-index: 200;
+}
+.menu-toggle:hover {
+  background: var(--color-primary-light, #e0e7ff);
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-text-light);
+}
+
+/* ─── Cards ───────────────────────────────────────────────────────── */
+.cards {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+}
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+/* ─── Chat Button ────────────────────────────────────────────────── */
+.chat-btn {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  width: 3.5rem;
+  height: 3.5rem;
+  background: var(--color-accent); /* Purple accent */
+  color: #fff;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: background 0.3s;
+  z-index: 100;
+}
+
+.chat-btn:hover {
+  background: #3700b3; /* Darker purple on hover */
+}
+
+/* ─── Chat Modal ─────────────────────────────────────────────────── */
+.chat-modal {
+  position: fixed;
+  bottom: 5.5rem;
+  right: 1.5rem;
+  width: 400px;
+  height: 600px;
+  background: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.2);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  z-index: 100;
+}
+
+.chat-modal.open {
+  display: flex;
+}
+
+.chat-modal.maximized {
+  width: 70vw;
+  height: 70vh;
+  top: 15vh;
+  left: 15vw;
+  bottom: auto;
+  right: auto;
+}
+
+/* ─── Modal Header ───────────────────────────────────────────────── */
+.chat-header {
+  background: var(--color-accent-dark);
+  color: #fff;
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.chat-header .title {
+  font-weight: 600;
+}
+
+.chat-header .header-controls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.icon-btn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  padding: 0.25rem;
+  font-size: 1.5rem;
+}
+
+/* ─── Chat Body ──────────────────────────────────────────────────── */
+.chat-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  overflow-y: auto;
+  background: #f1f1f1;
+}
+
+/* ─── Message Bubbles ───────────────────────────────────────────── */
+.message {
+  max-width: 80%;
+  padding: 0.75rem 1rem;
+  border-radius: 1rem;
+  line-height: 1.4;
+  word-wrap: break-word;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.message.user {
+  align-self: flex-end;
+  background: #abfdf9;
+  color: #000;
+  margin-left: 20%;
+}
+
+.message.bot {
+  align-self: flex-start;
+  background: #e0e0e0;
+  color: #000;
+  margin-right: 20%;
+}
+
+/* ─── Chat Input ─────────────────────────────────────────────────── */
+.chat-input {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-top: 1px solid #ddd;
+  padding: 0.5rem;
+}
+
+.chat-input input {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+}
+
+.chat-input .mic-btn,
+.chat-input .send-btn {
+  background: var(--color-accent);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* ─── Responsive ─────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .chat-modal,
+  .chat-modal.maximized {
+    width: 90vw !important;
+    height: 80vh !important;
+    bottom: 10vh !important;
+    right: auto !important;
+    left: 5vw !important;
+    top: auto !important;
+  }
+}
+
+
+
+  </style>
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar open" id="sidebar">
+    <h2>e-bitan</h2>
+    <nav>
+      <ul>
+
+        <!-- 1. Overview -->
+        <li>
+          <a href="/customers/owner_dashboard">
+            <span class="material-icons">dashboard</span>
+            Overview
+          </a>
+        </li>
+
+        <!-- 2. Shop -->
+        <li>
+            <details>
+              <summary><span class="material-icons">shop</span>Shop</summary>
+              <ul>
+                <li><a href="/shop-info/"><span class="material-icons">info</span>Information</a></li>
+                <li><a href="/shop-info-edit/"><span class="material-icons">edit</span>Edit Shop Info</a></li>
+              </ul>
+            </details>
+        </li>
+
+        <!-- 3. Products -->
+        <li>
+          <details>
+            <summary><span class="material-icons">inventory_2</span>Products</summary>
+            <ul>
+              <li><a href="#all-products"><span class="material-icons">view_list</span>All Products</a></li>
+              <li><a href="#add-product"><span class="material-icons">add_box</span>Add Product</a></li>
+              <li><a href="#remove-product"><span class="material-icons">remove_circle</span>Remove Product</a></li>
+              <li><a href="#edit-product"><span class="material-icons">edit</span>Edit Product</a></li>
+              <li><a href="#discount-product"><span class="material-icons">local_offer</span>Discount Product</a></li>
+              <li>
+                <details>
+                  <summary><span class="material-icons">inventory</span>Inventory Management</summary>
+                  <ul>
+                    <li><a href="#stock-levels"><span class="material-icons">bar_chart</span>Stock Levels</a></li>
+                    <li><a href="#low-stock-alerts"><span class="material-icons">warning</span>Low Stock Alerts</a></li>
+                    <li><a href="#restocking-schedule"><span class="material-icons">schedule</span>Restocking Schedule</a></li>
+                    <li><a href="#supplier-info"><span class="material-icons">people</span>Supplier Info</a></li>
+                  </ul>
+                </details>
+              </li>
+            </ul>
+          </details>
+        </li>
+
+        <!-- 4. Customers -->
+        <li>
+          <details>
+            <summary><span class="material-icons">people</span>Customers</summary>
+            <ul>
+              <li><a href="#all-customers"><span class="material-icons">list_alt</span>All Customers</a></li>
+              <li><a href="#regular-customers"><span class="material-icons">star</span>Regular Customers</a></li>
+              <li><a href="#potential-customers"><span class="material-icons">help_outline</span>Potential Customers</a></li>
+              <li>
+                <details>
+                  <summary><span class="material-icons">chat</span>Conversation History</summary>
+                  <ul>
+                    <li><a href="#all-conversations"><span class="material-icons">chat_bubble</span>All Conversation</a></li>
+                    <li><a href="#chatbot-conversation"><span class="material-icons">smart_toy</span>Chatbot</a></li>
+                    <li><a href="#audio-bot-conversation"><span class="material-icons">graphic_eq</span>Audio Bot</a></li>
+                  </ul>
+                </details>
+              </li>
+            </ul>
+          </details>
+        </li>
+
+        <!-- 5. Agents -->
+        <li>
+          <details>
+            <summary><span class="material-icons">support_agent</span>Agents</summary>
+            <ul>
+              <li><a href="#all-agents"><span class="material-icons">people</span>All Agents</a></li>
+              <li><a href="#revenue-by-agents"><span class="material-icons">bar_chart</span>Revenue by Agents</a></li>
+              <li><a href="#agent-action-logs"><span class="material-icons">history</span>Action Logs</a></li>
+              <li><a href="#social-media-integration"><span class="material-icons">share</span>Social Integration</a></li>
+            </ul>
+          </details>
+        </li>
+
+        <!-- 6. Marketing & Boosting -->
+        <li>
+          <details>
+            <summary><span class="material-icons">campaign</span>Marketing & Boosting</summary>
+            <ul>
+              <li><a href="#ebitan-boosting"><span class="material-icons">trending_up</span>e-bitan Boosting</a></li>
+              <li>
+                <details>
+                  <summary><span class="material-icons">share</span>Social Media Boosting</summary>
+                  <ul>
+                    <li><a href="#facebook"><span class="material-icons">facebook</span>Facebook</a></li>
+                    <li><a href="#instagram"><span class="material-icons">camera_alt</span>Instagram</a></li>
+                    <li><a href="#tiktok"><span class="material-icons">music_video</span>TikTok</a></li>
+                    <li><a href="#whatsapp"><span class="material-icons">whatsapp</span>WhatsApp</a></li>
+                    <li><a href="#x-twitter"><span class="material-icons">alternate_email</span>X/Twitter</a></li>
+                    <li><a href="#linkedin"><span class="material-icons">work</span>LinkedIn</a></li>
+                  </ul>
+                </details>
+              </li>
+              <li><a href="#revenue-from-boosting"><span class="material-icons">attach_money</span>Revenue from Boosting</a></li>
+              <li>
+                <details>
+                  <summary><span class="material-icons">touch_app</span>A/B Testing</summary>
+                  <ul>
+                    <li><a href="#campaign-performance"><span class="material-icons">insights</span>Campaign Performance</a></li>
+                    <li><a href="#page-versions"><span class="material-icons">layers</span>Product Page Versions</a></li>
+                    <li><a href="#strategy-comparison"><span class="material-icons">compare_arrows</span>Boosting Strategy Comparison</a></li>
+                  </ul>
+                </details>
+              </li>
+            </ul>
+          </details>
+        </li>
+
+        <!-- 7. Orders -->
+        <li>
+            <details>
+              <summary><span class="material-icons">receipt_long</span>Orders</summary>
+              <ul>
+                <li><a href="#all-agents"><span class="material-icons">shopping_cart</span>Current Orders</a></li>
+                <li><a href="#agent-action-logs"><span class="material-icons">history</span>Order History</a></li>
+              </ul>
+            </details>
+        </li>
+        
+
+        <!-- 8. Sales -->
+        <li>
+          <details>
+            <summary><span class="material-icons">monetization_on</span>Sales</summary>
+            <ul>
+              <li><a href="#total-revenue"><span class="material-icons">attach_money</span>Total Revenue</a></li>
+              <li><a href="#revenue-per-product"><span class="material-icons">inventory_2</span>Revenue per Product</a></li>
+              <li><a href="#revenue-forecast"><span class="material-icons">trending_up</span>Revenue Forecast</a></li>
+              <li><a href="#transaction-method"><span class="material-icons">credit_card</span>Transaction Method</a></li>
+              <li><a href="#transaction-history"><span class="material-icons">history</span>Transaction History</a></li>
+            </ul>
+          </details>
+        </li>
+
+        <!-- 9. Feedback -->
+        <li>
+          <details>
+            <summary><span class="material-icons">feedback</span>Feedback</summary>
+            <ul>
+              <li>
+                <details>
+                  <summary><span class="material-icons">star_rate</span>Ratings</summary>
+                  <ul>
+                    <li><a href="#product-ratings">Product Ratings</a></li>
+                    <li><a href="#shop-ratings">Shop Ratings</a></li>
+                  </ul>
+                </details>
+              </li>
+              <li>
+                <details>
+                  <summary><span class="material-icons">rate_review</span>Reviews</summary>
+                  <ul>
+                    <li><a href="#positive-reviews">Positive Reviews</a></li>
+                    <li><a href="#negative-reviews">Negative Reviews</a></li>
+                  </ul>
+                </details>
+              </li>
+              <li><a href="#complaints"><span class="material-icons">report_problem</span>Complaints</a></li>
+            </ul>
+          </details>
+        </li>
+
+        <!-- 10. Profile -->
+        <li>
+          <details>
+            <summary><span class="material-icons">account_circle</span>Profile</summary>
+            <ul>
+              <li><a href="#account">Account</a></li>
+              <li><a href="#billing">Billing</a></li>
+              <li><a href="#package-plan">Package/Plan</a></li>
+            </ul>
+          </details>
+        </li>
+
+        <!-- 11. Analytics & Reports -->
+        <li>
+          <details>
+            <summary><span class="material-icons">analytics</span>Analytics & Reports</summary>
+            <ul>
+              <li><a href="#revenue-report">Revenue</a></li>
+              <li><a href="#growth-report">Growth</a></li>
+              <li><a href="#product-reach">Product Reach</a></li>
+              <li><a href="#customer-satisfaction">Customer Satisfaction</a></li>
+            </ul>
+          </details>
+        </li>
+
+        <!-- 12. Shop Webpage Customization -->
+        <li>
+          <details>
+            <summary><span class="material-icons">web</span>Shop Webpage Customization</summary>
+            <ul>
+              <li><a href="#create-customize-webpage">Create/Customize Webpage</a></li>
+              <li><a href="#product-section-subsections">Product Section & Subsections</a></li>
+              <li><a href="#shop-info">Shop Info</a></li>
+              <li><a href="#shop-home">Shop Home</a></li>
+              <li><a href="#faq-page">FAQ Page</a></li>
+              <li><a href="#cart-page">Cart</a></li>
+              <li><a href="#payment-page">Payment Page</a></li>
+              <li><a href="#web-agent">Web Agent</a></li>
+              <li><a href="#custom-page">Custom Page</a></li>
+              <li><a href="#teams-admins">Teams & Admins</a></li>
+              <li><a href="#theme-layout">Theme & Layout Settings</a></li>
+              <li><a href="#language-localization">Language/Localization Options</a></li>
+            </ul>
+          </details>
+        </li>
+
+        <!-- 13. User Management -->
+        <li>
+          <details>
+            <summary><span class="material-icons">manage_accounts</span>User Management</summary>
+            <ul>
+              <li><a href="#user-roles">User Roles</a></li>
+              <li><a href="#permission-settings">Permission Settings</a></li>
+              <li><a href="#activity-logs">Activity Logs</a></li>
+            </ul>
+          </details>
+        </li>
+
+        <!-- 14. Notifications -->
+        <li>
+          <details>
+            <summary><span class="material-icons">notifications</span>Notifications</summary>
+            <ul>
+              <li><a href="#system-alerts">System Alerts</a></li>
+              <li><a href="#customer-messages">Customer Messages</a></li>
+              <li><a href="#agent-updates">Agent Updates</a></li>
+              <li><a href="#boosting-notifications">Boosting Notifications</a></li>
+            </ul>
+          </details>
+        </li>
+
+        <!-- 15. Audit Logs -->
+        <li>
+          <details>
+            <summary><span class="material-icons">fact_check</span>Audit Logs</summary>
+            <ul>
+              <li><a href="#product-changes">Product Changes</a></li>
+              <li><a href="#admin-user-actions">Admin/User Actions</a></li>
+              <li><a href="#security-logs">Security Logs</a></li>
+            </ul>
+          </details>
+        </li>
+
+        <!-- 16. Security Settings -->
+        <li>
+          <details>
+            <summary><span class="material-icons">security</span>Security Settings</summary>
+            <ul>
+              <li><a href="#2fa-authentication">2FA Authentication</a></li>
+              <li><a href="#password-policy">Password Policy</a></li>
+              <li><a href="#ip-whitelist">IP Whitelist/Blacklist</a></li>
+            </ul>
+          </details>
+        </li>
+
+        <!-- 17. Help & Support -->
+        <li>
+          <details>
+            <summary><span class="material-icons">support</span>Help & Support</summary>
+            <ul>
+              <li><a href="#knowledge-base">Knowledge Base</a></li>
+              <li><a href="#submit-ticket">Submit a Ticket</a></li>
+              <li><a href="#live-chat">Live Chat / Contact Support</a></li>
+            </ul>
+          </details>
+        </li>
+
+        <!-- 18. Logout -->
+        <li>
+          <a href="/logout/">
+            <span class="material-icons">logout</span>
+            Log out
+          </a>
+        </li>
+
+      </ul>
+    </nav>
+  </aside>
+
+
+
+
+
+
+
+  <!-- MAIN CONTENT -->
+  <div class="main open" id="main">
+    <div class="topbar mb-4">
+      <button class="menu-toggle" id="menuToggle">
+        <span class="material-icons" id="menuIcon">menu</span>
+      </button>
+      <h1>Dashboard</h1>
+      <div class="profile">
+        <span class="material-icons">account_circle</span>
+        {{ user.username }}
+      </div>
+    </div>
+    <br><br>
+    <!-- Example Cards Section -->
+    {% block content %}
+    <!-- default or empty; child templates override this -->
+    {% endblock %}
+
+    <!-- You can add the rest of your content sections here, matching the IDs in the sidebar -->
+  </div>
+
+
+
+
+
+
+
+
+    <!-- CHAT BUTTON -->
+    <button class="chat-btn" id="chatBtn">
+      <span class="material-icons">chat</span>
+    </button>
+
+    <!-- CHAT MODAL -->
+    <div class="chat-modal" id="chatModal">
+      <div class="chat-header">
+        <span class="title">e-bitan Assistant</span>
+        <div class="header-controls">
+          <button id="maximizeBtn" class="icon-btn"><span class="material-icons">open_in_full</span></button>
+          <button id="closeBtn" class="icon-btn"><span class="material-icons">close</span></button>
+        </div>
+      </div>
+
+      <div class="chat-body" id="chatBody">
+        <!-- Messages appear here -->
+      </div>
+
+      <div class="chat-input">
+        <button class="mic-btn" id="micBtn">
+          <span class="material-icons">mic</span>
+        </button>
+        <input type="text" id="chatInput" placeholder="Type a message..." />
+        <button class="send-btn" id="sendBtn">
+          <span class="material-icons">send</span>
+        </button>
+      </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Sidebar & Main toggle (unchanged)
+const sidebar = document.getElementById('sidebar');
+const main    = document.getElementById('main');
+const toggle  = document.getElementById('menuToggle');
+const icon    = document.getElementById('menuIcon');
+toggle.addEventListener('click', () => {
+  const open = sidebar.classList.toggle('open');
+  main.classList.toggle('open', open);
+  icon.textContent = open ? 'close' : 'menu';
+});
+
+// Header buttons
+const modal = document.getElementById('chatModal');
+document.getElementById('closeBtn')
+  .addEventListener('click', () => modal.classList.remove('open', 'maximized'));
+document.getElementById('maximizeBtn')
+  .addEventListener('click', () => {
+    const isMax = modal.classList.toggle('maximized');
+    document.querySelector('#maximizeBtn .material-icons').textContent =
+      isMax ? 'fullscreen_exit' : 'open_in_full';
+  });
+
+// Append user or bot message with correct classes
+function appendMessage(text, isUser = false) {
+  const line = document.createElement('div');
+  line.className = 'message ' + (isUser ? 'user' : 'bot');
+  line.textContent = text;
+  document.getElementById('chatBody').append(line);
+  document.getElementById('chatBody')
+    .scrollTo(0, document.getElementById('chatBody').scrollHeight);
+}
+
+// Chat modal toggle (unchanged)
+document.getElementById('chatBtn').addEventListener('click', () => {
+  document.getElementById('chatModal').classList.toggle('open');
+});
+
+// Keep full chat history
+const chatHistory = [];
+
+// Send current input to agent
+function sendMessage() {
+  const input = document.getElementById('chatInput');
+  const msg = input.value.trim();
+  if (!msg) return;
+  appendMessage(msg, true);
+  chatHistory.push({ role: 'user', content: msg });
+  input.value = '';
+
+  // stream from Django SSE endpoint
+  fetch('/api/chat/stream/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ messages: chatHistory })
+  }).then(res => {
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let assistantContent = '';
+    const botLine = document.createElement('div');
+    botLine.className = 'message bot'; // <- Important! apply bot styling
+    document.getElementById('chatBody').append(botLine);
+
+    function read() {
+      reader.read().then(({ done, value }) => {
+        if (done) {
+          chatHistory.push({ role: 'assistant', content: assistantContent });
+          return;
+        }
+        buffer += decoder.decode(value, { stream: true });
+        const parts = buffer.split('\n\n');
+        buffer = parts.pop();
+        parts.forEach(part => {
+          if (part.startsWith('data: ')) {
+            const chunk = part.slice(6);
+            assistantContent += chunk;
+            botLine.textContent = assistantContent;
+            document.getElementById('chatBody')
+              .scrollTo(0, document.getElementById('chatBody').scrollHeight);
+          }
+        });
+        read();
+      });
+    }
+    read();
+  }).catch(err => {
+    appendMessage('Error: ' + err);
+  });
+}
+
+// ENTER key sends
+document.getElementById('chatInput')
+  .addEventListener('keypress', e => { if (e.key === 'Enter') sendMessage(); });
+
+// SEND-button click
+document.getElementById('sendBtn')
+  .addEventListener('click', sendMessage);
+
+// Speech-to-text with auto-send on end
+let recognition, isRecording = false;
+if ('webkitSpeechRecognition' in window) {
+  recognition = new webkitSpeechRecognition();
+  recognition.lang = 'en-US';
+  recognition.interimResults = false;
+  recognition.onstart = () => { isRecording = true; };
+  recognition.onresult = e => {
+    const transcript = e.results[0][0].transcript;
+    document.getElementById('chatInput').value = transcript;
+  };
+  recognition.onend = () => {
+    isRecording = false;
+    // auto-send once user stops speaking
+    sendMessage();
+  };
+}
+
+// beep sound via Web Audio API
+function playBeep() {
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  const osc = ctx.createOscillator();
+  osc.type = 'sine';
+  osc.frequency.value = 600;
+  osc.connect(ctx.destination);
+  osc.start();
+  setTimeout(() => { osc.stop(); ctx.close(); }, 150);
+}
+
+// mic-button click: play beep & start recognition
+document.getElementById('micBtn').addEventListener('click', () => {
+  if (!recognition) return;
+  if (isRecording) {
+    recognition.stop();
+  } else {
+    playBeep();
+    recognition.start();
+  }
+});
+
+</script>
+
+  
+</body>
+</html>

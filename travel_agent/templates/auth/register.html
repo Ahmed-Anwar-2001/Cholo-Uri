@@ -1,0 +1,228 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up | Cholo Uri</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            background: url("{% static 'images/login.jpg' %}") no-repeat center center/cover;
+            background-attachment: fixed;
+            font-family: 'Inter', sans-serif;
+            color: #fff;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 0;
+        }
+        .signup-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+            box-sizing: border-box;
+        }
+        .signup-card {
+            position: relative;
+            background-color: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px) brightness(1.2);
+            border-radius: 1rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
+            width: 100%;
+            max-width: 450px;
+            padding: 2rem;
+            z-index: 1;
+        }
+        .message-box {
+            position: relative;
+            background-color: rgba(220, 53, 69, 0.95);
+            color: #fff;
+            padding: 1rem 2rem 1rem 1rem;
+            border-radius: 0.75rem;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            text-align: left;
+        }
+        .message-box .close-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.75rem;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: #fff;
+        }
+        h2, .tagline {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        h2 { font-weight: 700; letter-spacing: 1px; }
+        .tagline { color: #ccc; margin-bottom: 1.5rem; }
+        .nav-tabs .nav-link {
+            color: #bbb;
+            font-weight: 600;
+        }
+        .nav-tabs .nav-link.active {
+            color: #fff;
+            border-color: #10B981;
+            background: rgba(16,185,129,0.2);
+            border-radius: 0.5rem;
+        }
+        .form-control {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: #fff;
+        }
+        .form-control::placeholder { color: rgba(255,255,255,0.7); }
+        .form-control:focus {
+            background: rgba(255,255,255,0.15);
+            border: 1px solid #10B981;
+            box-shadow: none;
+            color: #fff;
+        }
+        .btn-neon {
+            background: none;
+            border: 2px solid #10B981;
+            color: #10B981;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        .btn-neon:hover {
+            background: #10B981;
+            color: #fff;
+            box-shadow: 0 0 10px #10B981, 0 0 20px #10B981;
+        }
+        .footer-text {
+            font-size: 0.85rem;
+            color: #bbb;
+            text-align: center;
+            margin-top: 1rem;
+        }
+        @media (max-width: 576px) {
+            .signup-card { padding: 1.5rem; }
+            .nav-tabs .nav-link { font-size: 0.9rem; }
+            .btn-neon { font-size: 0.9rem; padding: 0.6rem 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="signup-container">
+        <div class="signup-card">
+            <h2>Cholo Uri</h2>
+            <p class="tagline">An AI-friendly Customer Support System that makes travel agent and customers' lives easier</p>
+
+            <!-- Highlighted message area -->
+            {% if messages %}
+            <div class="message-box" id="messageBox">
+                <span class="close-btn" id="closeMsg">&times;</span>
+                {% for message in messages %}
+                    <div>{{ message }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <ul class="nav nav-tabs mb-4 justify-content-center" id="signupTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link {% if active_tab == 'customer' %}active{% endif %}" id="cust-signup-tab" data-bs-toggle="tab" data-bs-target="#cust-signup" type="button">
+                      Customer
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link {% if active_tab == 'owner' %}active{% endif %}" id="owner-signup-tab" data-bs-toggle="tab" data-bs-target="#owner-signup" type="button">
+                      Shop Owner
+                    </button>
+                </li>
+            </ul>
+            <div class="tab-content" id="signupTabContent">
+                <div class="tab-pane fade {% if active_tab == 'customer' %}show active{% endif %}" id="cust-signup" role="tabpanel">
+                    <form method="POST">{% csrf_token %}
+                        <input type="hidden" name="form_type" value="customer">
+                        <div class="mb-3">
+                            <label for="custName" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="custName" name="username" placeholder="Your Name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="custEmailReg" class="form-label">Email address</label>
+                            <input type="email" class="form-control" id="custEmailReg" name="email" placeholder="you@example.com" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="custPasswordReg" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="custPasswordReg" name="password1" placeholder="Password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="custPasswordConfirm" class="form-label">Confirm Password</label>
+                            <input type="password" class="form-control" id="custPasswordConfirm" name="password2" placeholder="Confirm Password" required>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-neon">Sign Up as Customer</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="tab-pane fade {% if active_tab == 'owner' %}show active{% endif %}" id="owner-signup" role="tabpanel">
+                    <form method="POST">{% csrf_token %}
+                        <input type="hidden" name="form_type" value="owner">
+                        <div class="mb-3">
+                            <label for="shopName" class="form-label">Shop Name</label>
+                            <input type="text" class="form-control" id="shopName" name="shop_name" placeholder="My Awesome Shop" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="shopslogan" class="form-label">Slogan/Motto/Sub-title</label>
+                            <input type="text" class="form-control" id="shopslogan" name="slogan" placeholder="Best pastry shop in town" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="ownerUsernameReg" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="ownerUsernameReg" name="username" placeholder="shopowner01" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="ownerEmailReg" class="form-label">Email address</label>
+                            <input type="email" class="form-control" id="ownerEmailReg" name="email" placeholder="owner@example.com" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="ownerPasswordReg" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="ownerPasswordReg" name="password1" placeholder="Password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="ownerPasswordConfirmReg" class="form-label">Confirm Password</label>
+                            <input type="password" class="form-control" id="ownerPasswordConfirmReg" name="password2" placeholder="Confirm Password" required>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-neon">Sign Up as Shop Owner</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <p class="footer-text">Already have an account? <a href="{% url 'login' %}" class="link-light">Login here</a></p>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const msgBox = document.getElementById('messageBox');
+        if (!msgBox) return;
+
+        // Close on click of ×
+        document.getElementById('closeMsg')
+                .addEventListener('click', () => msgBox.remove());
+
+        // Hide when switching tabs
+        document.querySelectorAll('#signupTab button[data-bs-toggle]')
+                .forEach(btn => btn.addEventListener('click', () => msgBox.remove()));
+      });
+    </script>
+</body>
+</html>
