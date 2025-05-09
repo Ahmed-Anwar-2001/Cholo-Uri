@@ -6,7 +6,13 @@ from db_connection import *
 from django.contrib import messages
 from django.utils import timezone
 from django.core.validators import validate_email
-from django.core.exceptions import ValidationError
+from django.views.decorators.http import require_http_methods
+from django.views.decorators.csrf import csrf_protect
+from django.utils import timezone
+from django.core.exceptions import ValidationError as DjangoValidationError
+from django.contrib.auth.password_validation import validate_password, ValidationError as PasswordValidationError
+from django.utils.http import url_has_allowed_host_and_scheme
+from django.conf import settings
 import mongoengine.errors as me_errors
 import re
 from .models import *
@@ -16,64 +22,60 @@ def home(request):
     return redirect(login)
 
 
+# views.py
+
+
+@csrf_protect
+@require_http_methods(["GET", "POST"])
 def login(request):
+    """
+    Renders and processes the login form.
+    On success: stores user_id and role in session, redirects to 'next' or dashboard.
+    """
     if request.method == 'POST':
-        form_type = request.POST.get('form_type')
-        context = {'active_tab': form_type}
+        email = request.POST.get('email', '').strip().lower()
+        password = request.POST.get('password', '')
 
-        # — Customer login —
-        if form_type == 'customer':
-            email = request.POST.get('email', '').strip().lower()
-            pwd   = request.POST.get('password', '')
+        # 1) Required fields
+        if not email or not password:
+            messages.error(request, "Both email and password are required.")
+            return redirect('login')
 
-            if not email or not pwd:
-                messages.error(request, 'Email and password are required.')
-                return render(request, 'login.html', context)
+        # 2) Email format
+        try:
+            validate_email(email)
+        except DjangoValidationError:
+            messages.error(request, "Enter a valid email address.")
+            return redirect('login')
 
-            user = User.objects(role='customer', email=email).first()
-            if not user or not user.check_password(pwd):
-                messages.error(request, 'Invalid email or password.')
-                return render(request, 'login.html', context)
+        # 3) Lookup user
+        user = User.objects(email=email).first()
+        if not user or not user.is_active:
+            messages.error(request, "Invalid credentials.")
+            return redirect('login')
 
-            request.session.update({
-                'user_id':   str(user.id),
-                'user_role': user.role,
-                'logged_in': True,
-            })
-            return redirect('customer_dashboard')
+        # 4) Password check
+        if not user.check_password(password):
+            messages.error(request, "Invalid credentials.")
+            return redirect('login')
 
-        # — Shop owner login —
-        elif form_type == 'owner':
-            ident = request.POST.get('identifier', '').strip().lower()
-            pwd   = request.POST.get('password', '')
+        # 5) All good — log the user in
+        request.session.flush()  # clear out any old session data
+        request.session['user_id'] = str(user.id)
+        request.session['role'] = user.role
+        # optional: set session expiry (e.g. 2 weeks)
+        request.session.set_expiry(settings.SESSION_COOKIE_AGE)
 
-            if not ident or not pwd:
-                messages.error(request, 'Username/email and password are required.')
-                return render(request, 'login.html', context)
+        messages.success(request, f"Welcome back, {user.username}!")
 
-            # allow login by username or email
-            query = {'role': 'shop_owner'}
-            if '@' in ident:
-                query['email'] = ident
-            else:
-                query['username'] = ident
+        # 6) Safe redirect to next or dashboard
+        next_url = request.GET.get('next', '')
+        if next_url and url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}):
+            return redirect(next_url)
+        return redirect('dashboard')
 
-            user = User.objects(**query).first()
-            if not user or not user.check_password(pwd):
-                messages.error(request, 'Invalid credentials.')
-                return render(request, 'login.html', context)
-            shop = Shop.objects(owner=user).first()
-            request.session.update({
-                'user_id':   str(user.id),
-                'user_role': user.role,
-                'shop_id':   str(user.shop.id) if hasattr(user, 'shop') else None,
-                'logged_in': True,
-                'shop_id': str(shop.id)
-            })
-            return redirect('owner_dashboard')
-
-    # GET or fallback
-    return render(request, 'auth/login.html', {'active_tab': 'customer'})
+    # GET
+    return render(request, 'auth/login.html')
 
 
 
@@ -81,132 +83,82 @@ def login(request):
 
 
 
+
+USERNAME_REGEX = r'^[\w.@+-]+$'  # letters, digits and @/./+/-/_
+
+
+@csrf_protect
+@require_http_methods(["GET", "POST"])
 def register(request):
-    if request.method != 'POST':
-        return render(request, 'auth/register.html', {'active_tab': 'customer'})
+    if request.method == 'POST':
+        username = request.POST.get('username', '').strip()
+        firstname = request.POST.get('firstname', '').strip()
+        lastname = request.POST.get('lastname', '').strip()
+        email = request.POST.get('email', '').strip().lower()
+        password1 = request.POST.get('password1', '')
+        password2 = request.POST.get('password2', '')
 
-    form_type = request.POST.get('form_type')
-    context   = {'active_tab': form_type}
+        # 1. Required fields
+        if not (username and email and password1 and password2 and firstname and lastname):
+            messages.error(request, "All fields are required.")
+            return redirect('register')
 
-    # --- Common fields ---
-    username  = request.POST.get('username', '').strip().lower()
-    email     = request.POST.get('email', '').strip().lower()
-    pwd1      = request.POST.get('password1', '')
-    pwd2      = request.POST.get('password2', '')
+        # 2. Username format
+        if not re.match(USERNAME_REGEX, username):
+            messages.error(request, "Username may contain only letters, digits and @/./+/-/_ characters.")
+            return redirect('register')
 
-    # 1) Required
-    if not all([username, email, pwd1, pwd2]):
-        messages.error(request, 'All fields are required.')
-        return render(request, 'auth/register.html', context)
+        # 3. Password match
+        if password1 != password2:
+            messages.error(request, "Passwords do not match.")
+            return redirect('register')
 
-    # 2) Email format
-    try:
-        validate_email(email)
-    except ValidationError:
-        messages.error(request, 'Enter a valid email address.')
-        return render(request, 'auth/register.html', context)
-
-    # 3) Passwords match
-    if pwd1 != pwd2:
-        messages.error(request, 'Passwords do not match.')
-        return render(request, 'auth/register.html', context)
-
-    # 4) Minimum password length
-    if len(pwd1) < 8:
-        messages.error(request, 'Password must be at least 8 characters long.')
-        return render(request, 'auth/register.html', context)
-
-    # --- CUSTOMER REGISTRATION ---
-    if form_type == 'customer':
-        if User.objects(email=email).first():
-            messages.error(request, 'An account with that email already exists.')
-            return render(request, 'auth/register.html', {'active_tab': 'customer'})
-
-        user = User(
-            username   = username,
-            email      = email,
-            role       = 'customer',
-            is_active  = True,
-            created_at = timezone.now(),
-            updated_at = timezone.now(),
-        )
-        user.set_password(pwd1)
+        # 4. Password strength
         try:
-            user.save()
-        except me_errors.NotUniqueError:
-            messages.error(request, 'Something went wrong—please try again.')
-            return render(request, 'auth/register.html', {'active_tab': 'customer'})
+            validate_password(password1)
+        except PasswordValidationError as e:
+            for msg in e.messages:
+                messages.error(request, msg)
+            return redirect('register')
 
-        # log in & redirect
-        request.session.update({
-            'user_id':   str(user.id),
-            'user_role': user.role,
-            'logged_in': True,
-        })
-        return redirect('login')
+        # 5. Email format
+        try:
+            validate_email(email)
+        except DjangoValidationError:
+            messages.error(request, "Enter a valid email address.")
+            return redirect('register')
 
-    # --- SHOP OWNER REGISTRATION ---
-    elif form_type == 'owner':
-        shop_name = request.POST.get('shop_name', '').strip()
-        slogan    = request.POST.get('slogan', '').strip().lower()
-
-        # extra required fields
-        if not shop_name:
-            messages.error(request, 'Shop name is required.')
-            return render(request, 'auth/register.html', context)
-
-        # email uniqueness
+        # 6. Check duplicate email and username
         if User.objects(email=email).first():
-            messages.error(request, 'An account with that email already exists.')
-            return render(request, 'auth/register.html', context)
-
+            messages.error(request, "An account with that email already exists.")
+            return redirect('register')
         
-        # create user
-        user = User(
-            username   = username,
-            email      = email,
-            role       = 'shop_owner',
-            is_active  = True,
-            created_at = timezone.now(),
-            updated_at = timezone.now(),
-        )
-        user.set_password(pwd1)
+        if User.objects(username=username).first():
+            messages.error(request, "Username already exists.")
+            return redirect('register')
+
+        # 7. All good, create user
         try:
-            user.save()
-        except me_errors.NotUniqueError:
-            messages.error(request, 'Unable to create your account—please try again.')
-            return render(request, 'auth/register.html', context)
+            user = User(
+                username=username,
+                email=email,
+                first_name=firstname,
+                last_name=lastname, 
+                role='customer',               # force default role
+                is_active=True,
+                created_at=timezone.now(),
+                updated_at=timezone.now()
+            )
+            user.set_password(password1)
+            messages.success(request, "Registration successful! Please sign in.")
+            return redirect('login')
 
-        # create shop
-        shop = Shop(
-            owner      = user,
-            name       = shop_name,
-            slogan     = slogan,
-            settings   = {},
-            created_at = timezone.now(),
-            updated_at = timezone.now(),
-        )
-        try:
-            shop.save()
-        except me_errors.NotUniqueError:
-            # rollback user if shop fails
-            user.delete()
-            messages.error(request, 'Domain conflict. Please choose another domain.')
-            return render(request, 'auth/register.html', context)
+        except me_errors.ValidationError:
+            messages.error(request, "Failed to create account; please try again.")
+            return redirect('register')
 
-        # log in & redirect
-        request.session.update({
-            'user_id':   str(user.id),
-            'user_role': user.role,
-            'shop_id':   str(shop.id),
-            'logged_in': True,
-        })
-        return redirect('login')
-
-    # --- INVALID FORM TYPE ---
-    else:
-        messages.error(request, 'Invalid registration type.')
-        return render(request, 'auth/register.html', context)
+    # GET
+    return render(request, 'auth/register.html')
     
 
 

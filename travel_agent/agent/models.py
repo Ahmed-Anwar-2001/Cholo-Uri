@@ -12,6 +12,8 @@ class User(me.Document):
     ROLES = ('shop_owner', 'shop_employee', 'customer', 'admin', 'superadmin')
 
     username    = me.StringField(required=True)
+    first_name = me.StringField(required=True)
+    last_name = me.StringField(required=True)
     email       = me.EmailField(required=True, unique=True)
     password    = me.StringField(required=True)
     role        = me.StringField(choices=ROLES, default='customer')
@@ -33,12 +35,21 @@ class User(me.Document):
         return check_password(raw_password, self.password)
 
     @property
-    def is_shop_owner(self):
-        return self.role == 'shop_owner'
+    def is_monch_owner(self):
+        return self.role == 'moncho_owner'
 
     @property
-    def is_shop_employee(self):
-        return self.role == 'shop_employee'
+    def is_moncho_employee(self):
+        return self.role == 'moncho_employee'
+    
+    @property
+    def is_chologhuri_owner(self):
+        return self.role == 'chologhuri_owner'
+    
+    @property
+    def is_chologhuri_employee(self):
+        return self.role == 'chologhuri_employee'
+
 
 class Shop(me.Document):
     owner       = me.ReferenceField(User, reverse_delete_rule=me.CASCADE)
