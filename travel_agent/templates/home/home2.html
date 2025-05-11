@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Moncho.ai - Connect, Freelance, Explore</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800">
+  <!-- Header / Navbar -->
+  <header class="bg-white shadow">
+    <div class="container mx-auto px-6 py-4 flex items-center justify-between">
+      <a href="#" class="flex items-center space-x-2">
+        <img src="/static/images/moncho.jpeg" alt="Moncho Logo" class="h-8 w-8" />
+        <span class="text-2xl font-bold text-gray-900">moncho.ai</span>
+      </a>
+      <nav class="space-x-4 hidden md:flex items-center">
+        <a href="https://moncho.travels" class="hover:text-indigo-600">Travels</a>
+        <a href="https://moncho.edu" class="hover:text-indigo-600">Edu</a>
+        <a href="https://moncho.store" class="hover:text-indigo-600">Store</a>
+        <a href="https://moncho.blogs" class="hover:text-indigo-600">Blogs</a>
+        <a href="https://moncho.health" class="hover:text-indigo-600">Health</a>
+        <a href="https://moncho.connect" class="hover:text-indigo-600">Connect</a>
+      </nav>
+      <div class="hidden md:flex space-x-2">
+        <a href="/login" class="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Login</a>
+        <a href="/signup" class="px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-700 rounded">Sign Up</a>
+      </div>
+      <button class="md:hidden focus:outline-none" id="menu-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </div>
+    <!-- Mobile Menu -->
+    <div class="md:hidden hidden" id="menu">
+      <a href="https://moncho.travels" class="block px-6 py-2 border-t hover:bg-gray-100">Travels</a>
+      <a href="https://moncho.edu" class="block px-6 py-2 border-t hover:bg-gray-100">Edu</a>
+      <a href="https://moncho.store" class="block px-6 py-2 border-t hover:bg-gray-100">Store</a>
+      <a href="https://moncho.blogs" class="block px-6 py-2 border-t hover:bg-gray-100">Blogs</a>
+      <a href="https://moncho.health" class="block px-6 py-2 border-t hover:bg-gray-100">Health</a>
+      <a href="https://moncho.connect" class="block px-6 py-2 border-t hover:bg-gray-100">Connect</a>
+      <a href="/login" class="block px-6 py-2 border-t hover:bg-gray-100">Login</a>
+      <a href="/signup" class="block px-6 py-2 border-t hover:bg-gray-100">Sign Up</a>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="relative bg-gradient-to-br from-green-400 to-blue-500 text-white">
+    <div class="container mx-auto px-6 py-20 text-center">
+      <h1 class="text-4xl md:text-5xl font-extrabold mb-4">Unleash the Power of Possibility</h1>
+      <p class="text-lg md:text-xl mb-8">One Platform. Infinite Building Blocks.</p>
+      <div class="max-w-xl mx-auto">
+        <div class="flex items-center bg-white rounded-lg overflow-hidden shadow-lg">
+          <input id="prompt-input" type="text" placeholder="Start typing your idea or goal..." class="w-full px-4 py-3 text-gray-800 focus:outline-none" />
+          <button id="voice-btn" class="px-4 py-3 border-l border-gray-200 hover:bg-gray-100">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 1v11m0 0c-1.657 0-3 1.343-3 3v2h6v-2c0-1.657-1.343-3-3-3z" />
+            </svg>
+          </button>
+          <button id="submit-btn" class="bg-indigo-600 hover:bg-indigo-700 px-6 py-3 font-semibold text-white">Go</button>
+        </div>
+      </div>
+    </div>
+    <div class="absolute top-0 right-0 w-40 h-40 bg-indigo-700 opacity-20 transform rotate-45"></div>
+  </section>
+
+  <!-- Discover Platforms -->
+  <section id="discover" class="container mx-auto px-6 py-16">
+    <h2 class="text-3xl font-bold mb-8 text-center">Discover Your Moncho</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+      <a href="https://moncho.travels" class="block p-6 bg-white rounded-lg shadow hover:shadow-lg transition text-center">
+        <img src="/static/icons/travel.svg" alt="Travels" class="mx-auto mb-4 h-12" />
+        <h3 class="font-semibold mb-2">moncho.travels</h3>
+        <p>Create tailored itineraries & find best deals.</p>
+      </a>
+      <a href="https://moncho.edu" class="block p-6 bg-white rounded-lg shadow hover:shadow-lg transition text-center">
+        <img src="/static/icons/edu.svg" alt="Edu" class="mx-auto mb-4 h-12" />
+        <h3 class="font-semibold mb-2">moncho.edu</h3>
+        <p>Discover courses, mentors & learning paths.</p>
+      </a>
+      <a href="https://moncho.store" class="block p-6 bg-white rounded-lg shadow hover:shadow-lg transition text-center">
+        <img src="/static/icons/store.svg" alt="Store" class="mx-auto mb-4 h-12" />
+        <h3 class="font-semibold mb-2">moncho.store</h3>
+        <p>Launch your shop with customizable templates.</p>
+      </a>
+      <a href="https://moncho.blogs" class="block p-6 bg-white rounded-lg shadow hover:shadow-lg transition text-center">
+        <img src="/static/icons/blogs.svg" alt="Blogs" class="mx-auto mb-4 h-12" />
+        <h3 class="font-semibold mb-2">moncho.blogs</h3>
+        <p>Share insights & connect with readers.</p>
+      </a>
+      <a href="https://moncho.health" class="block p-6 bg-white rounded-lg shadow hover:shadow-lg transition text-center">
+        <img src="/static/icons/health.svg" alt="Health" class="mx-auto mb-4 h-12" />
+        <h3 class="font-semibold mb-2">moncho.health</h3>
+        <p>Access AI-powered health advice & resources.</p>
+      </a>
+      <a href="https://moncho.connect" class="block p-6 bg-white rounded-lg shadow hover:shadow-lg transition text-center">
+        <img src="/static/icons/connect.svg" alt="Connect" class="mx-auto mb-4 h-12" />
+        <h3 class="font-semibold mb-2">moncho.connect</h3>
+        <p>Network, find gigs, and collaborate seamlessly.</p>
+      </a>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <main class="container mx-auto px-6 py-16 space-y-20">
+    <!-- AI Agents -->
+    <section id="agents">
+      <h2 class="text-3xl font-bold mb-6">AI Agents at Your Service</h2>
+      <p class="mb-8">Chat or speak to our intelligent agents to launch tasks instantly.</p>
+      <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
+        <div class="p-6 bg-white rounded-lg shadow hover:shadow-md transition">
+          <h3 class="font-semibold mb-2">Freelance Finder</h3>
+          <p>Sourcing top freelancers for any job.</p>
+        </div>
+        <div class="p-6 bg-white rounded-lg shadow hover:shadow-md transition">
+          <h3 class="font-semibold mb-2">Store Builder</h3>
+          <p>Open your store with hundreds of templates.</p>
+        </div>
+        <div class="p-6 bg-white rounded-lg shadow hover:shadow-md transition">
+          <h3 class="font-semibold mb-2">Health Advisor</h3>
+          <p>Get reliable AI-driven health guidance.</p>
+        </div>
+        <div class="p-6 bg-white rounded-lg shadow hover:shadow-md transition">
+          <h3 class="font-semibold mb-2">Travel Planner</h3>
+          <p>Plan trips, routes, and packages in seconds.</p>
+        </div>
+        <div class="p-6 bg-white rounded-lg shadow hover:shadow-md transition">
+          <h3 class="font-semibold mb-2">Network Agent</h3>
+          <p>Match with collaborators and gig hosts.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Explore Categories -->
+    <section id="categories">
+      <h2 class="text-3xl font-bold mb-6">Explore Categories</h2>
+      <div class="flex flex-wrap gap-4">
+        <button class="px-4 py-2 bg-orange-400 text-white rounded-lg">Creativity</button>
+        <button class="px-4 py-2 bg-green-400 text-white rounded-lg">Travel</button>
+        <button class="px-4 py-2 bg-indigo-600 text-white rounded-lg">Entrepreneurship</button>
+        <button class="px-4 py-2 bg-blue-500 text-white rounded-lg">Builders</button>
+        <button class="px-4 py-2 bg-teal-500 text-white rounded-lg">Health</button>
+        <button class="px-4 py-2 bg-pink-500 text-white rounded-lg">Community</button>
+      </div>
+    </section>
+
+    <!-- Meet the Community -->
+    <section id="makers">
+      <h2 class="text-3xl font-bold mb-6">Meet the Community</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+        <div class="bg-white rounded-lg overflow-hidden shadow">
+          <img src="/static/images/user1.jpg" alt="Alice" class="w-full h-40 object-cover" />
+          <div class="p-4">
+            <h3 class="font-semibold">Alice C.</h3>
+            <p class="text-sm text-gray-600">Travel Photographer</p>
+          </div>
+        </div>
+        <div class="bg-white rounded-lg overflow-hidden shadow">
+          <img src="/static/images/Mark.jpg" alt="Mark" class="w-full h-40 object-cover" />
+          <div class="p-4">
+            <h3 class="font-semibold">Mark T.</h3>
+            <p class="text-sm text-gray-600">Entrepreneur & Writer</p>
+          </div>
+        </div>
+        <div class="bg-white rounded-lg overflow-hidden shadow">
+          <img src="/static/images/user3.jpg" alt="Sophia" class="w-full h-40 object-cover" />
+          <div class="p-4">
+            <h3 class="font-semibold">Sophia R.</h3>
+            <p class="text-sm text-gray-600">Visual Artist</p>
+          </div>
+        </div>
+        <div class="bg-white rounded-lg overflow-hidden shadow">
+          <img src="/static/images/user4.jpg" alt="David" class="w-full h-40 object-cover" />
+          <div class="p-4">
+            <h3 class="font-semibold">David S.</h3>
+            <p class="text-sm text-gray-600">Builder & Innovator</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Grab Opportunities -->
+    <section id="opportunities">
+      <h2 class="text-3xl font-bold mb-6">Grab Opportunities Near You</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition">
+          <h3 class="font-semibold">Ellie ★</h3>
+          <p class="text-sm text-gray-600">New York, NY – Designer</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition">
+          <h3 class="font-semibold">Michael</h3>
+          <p class="text-sm text-gray-600">Austin, TX – Collaboration</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition">
+          <h3 class="font-semibold">Freelance Developer</h3>
+          <p class="text-sm text-gray-600">Los Angeles, CA – Contract</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-gray-400 py-8">
+    <div class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div>
+        <h4 class="text-white font-semibold mb-2">Quick Links</h4>
+        <ul class="space-y-1">
+          <li><a href="#discover" class="hover:text-white">Discover</a></li>
+          <li><a href="#connect" class="hover:text-white">Connect</a></li>
+          <li><a href="#support" class="hover:text-white">Support</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-white font-semibold mb-2">Moncho Platforms</h4>
+        <ul class="space-y-1">
+          <li><a href="https://moncho.travels" class="hover:text-white">moncho.travels</a></li>
+          <li><a href="https://moncho.edu" class="hover:text-white">moncho.edu</a></li>
+          <li><a href="https://moncho.store" class="hover:text-white">moncho.store</a></li>
+          <li><a href="https://moncho.blogs" class="hover:text-white">moncho.blogs</a></li>
+          <li><a href="https://moncho.health" class="hover:text-white">moncho.health</a></li>
+          <li><a href="https://moncho.connect" class="hover:text-white">moncho.connect</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-white font-semibold mb-2">Follow Us</h4>
+        <div class="flex space-x-4">
+          <a href="#" class="hover:text-white">Twitter</a>
+          <a href="#" class="hover:text-white">Facebook</a>
+          <a href="#" class="hover:text-white">LinkedIn</a>
+        </div>
+      </div>
+    </div>
+    <div class="text-center text-sm mt-6">&copy; 2025 Moncho.ai. All rights reserved.</div>
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+    document.getElementById('menu-btn').addEventListener('click', () =>
+      document.getElementById('menu').classList.toggle('hidden')
+    );
+    document.getElementById('submit-btn').addEventListener('click', () => {
+      const p = document.getElementById('prompt-input').value;
+      if (p.trim()) window.location.href = `/chat?prompt=${encodeURIComponent(p)}`;
+    });
+    document.getElementById('voice-btn').addEventListener('click', () =>
+      alert('Voice agent coming soon!')
+    );
+  </script>
+</body>
+</html>

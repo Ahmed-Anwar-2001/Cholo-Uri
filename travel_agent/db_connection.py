@@ -24,4 +24,3 @@ connect(
 )
 
 db = client[db_name]
-print(db)

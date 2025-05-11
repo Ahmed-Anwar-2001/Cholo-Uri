@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Travel Community Home</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Alpine.js for minimal interactivity -->
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <!-- Hero Icons -->
+  <script src="https://unpkg.com/feather-icons"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 antialiased">
+
+<header x-data="{ mobileOpen: false }" class="bg-white shadow fixed w-full z-20">
+  <div class="max-w-7xl mx-auto px-6 lg:px-8 h-16 flex items-center justify-between">
+
+    <!-- Logo -->
+    <a href="#" class="text-xl font-bold text-indigo-600">
+      Moncho.Travel
+    </a>
+
+    <!-- DESKTOP: Nav + Actions -->
+    <div class="hidden lg:flex items-center">
+
+      <!-- 1. Primary Nav -->
+      <nav class="flex space-x-8 ml-6 whitespace-nowrap">
+        <a href="#destinations"
+           class="text-sm text-gray-700 transition hover:text-indigo-600 hover:underline hover:decoration-2 hover:decoration-indigo-600 hover:underline-offset-4">
+          Destinations
+        </a>
+        <a href="#community"
+           class="text-sm text-gray-700 transition hover:text-indigo-600 hover:underline hover:decoration-2 hover:decoration-indigo-600 hover:underline-offset-4">
+          Community Feed
+        </a>
+        <a href="#deals"
+           class="text-sm text-gray-700 transition hover:text-indigo-600 hover:underline hover:decoration-2 hover:decoration-indigo-600 hover:underline-offset-4">
+          Packages & Deals
+        </a>
+        <a href="#ai"
+           class="text-sm text-gray-700 transition hover:text-indigo-600 hover:underline hover:decoration-2 hover:decoration-indigo-600 hover:underline-offset-4">
+          AI Assistant
+        </a>
+        <a href="#mates"
+           class="text-sm text-gray-700 transition hover:text-indigo-600 hover:underline hover:decoration-2 hover:decoration-indigo-600 hover:underline-offset-4">
+          Find Mates
+        </a>
+        
+      </nav>
+
+      <!-- 2. Search -->
+      <div class="relative ml-8 mr-0">
+        <input
+          type="text"
+          placeholder="Search trips..."
+          class="h-9 w-56 pl-3 pr-10 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
+        />
+        <span class="absolute inset-y-0 right-3 flex items-center text-gray-400">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+               viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1110.5 3a7.5 7.5 0 016.15 12.65z" />
+          </svg>
+        </span>
+      </div>
+
+      <div  class="relative ml-4 mr-12">
+        <!-- 4. Voice -->
+      <button
+        class="w-9 h-9 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded-md transition"
+        @click="startVoice()"
+        aria-label="Voice search"
+      >
+        <i data-feather="mic" class="text-gray-600"></i>
+      </button>
+      </div>
+
+      <!-- 3. Auth -->
+      <div class="flex items-center space-x-6 mr-2">
+        <a href="{% url 'login' %}" class="text-sm text-gray-700 hover:text-indigo-600 transition">
+          Login
+        </a>
+        <a
+          href="{% url 'register' %}"
+          class="px-2 py-2 bg-indigo-600 text-sm text-white font-medium rounded-md hover:bg-indigo-700 transition"
+        >
+          Sign Up
+        </a>
+      </div>
+
+      
+    </div>
+
+    <!-- MOBILE Hamburger (unchanged) -->
+    <div class="lg:hidden">
+      <button
+        @click="mobileOpen = !mobileOpen"
+        class="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
+        aria-label="Toggle menu"
+      >
+        <svg x-show="!mobileOpen" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700"
+             fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+        <svg x-show="mobileOpen" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700"
+             fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- MOBILE Menu (exactly as before) -->
+  <div
+    x-show="mobileOpen"
+    @click.away="mobileOpen = false"
+    class="lg:hidden bg-white border-t border-gray-200 shadow-md"
+  >
+    <nav class="flex flex-col px-4 py-4 space-y-2">
+      <a href="#destinations" class="py-2 text-gray-700 hover:text-indigo-600">Destinations</a>
+      <a href="#community"    class="py-2 text-gray-700 hover:text-indigo-600">Community Feed</a>
+      <a href="#deals"        class="py-2 text-gray-700 hover:text-indigo-600">Packages & Deals</a>
+      <a href="#ai"           class="py-2 text-gray-700 hover:text-indigo-600">AI Assistant</a>
+      <a href="#mates"        class="py-2 text-gray-700 hover:text-indigo-600">Find Mates</a>
+      <a href="#vendors"      class="py-2 text-gray-700 hover:text-indigo-600">Vendor Services</a>
+
+      <div class="mt-4">
+        <input
+          type="text"
+          placeholder="Search trips..."
+          class="w-full h-9 pl-3 pr-10 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
+        />
+      </div>
+
+      <div class="mt-4 flex flex-col space-y-2">
+        <a href="{% url 'login' %}" class="py-2 text-center text-gray-700 hover:text-indigo-600">Login</a>
+        <a
+          href="{% url 'register' %}"
+          class="py-2 text-center bg-indigo-600 text-sm text-white rounded-md hover:bg-indigo-700 transition"
+        >
+          Sign Up
+        </a>
+        <button
+          @click="startVoice()"
+          class="mt-2 py-2 w-full border border-gray-300 rounded-md flex items-center justify-center hover:bg-gray-100 transition"
+        >
+          <i data-feather="mic" class="mr-2 text-gray-600"></i>
+          Voice Search
+        </button>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => feather.replace());
+  function startVoice() {
+    alert("Voice interface coming soon!");
+  }
+</script>
+
+
+
+  <main class="pt-10">
+    <!-- Hero Section -->
+    <section class="relative h-screen overflow-hidden">
+      <div class="absolute inset-0">
+        <img src="/static/images/login.jpg" alt="Hero" class="w-full h-full object-cover opacity-100" />
+      </div>
+      <div class="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
+        <h1 class="text-4xl md:text-6xl font-extrabold text-white">Build Your Next Adventure with Like-Minded Travelers</h1>
+        <p class="mt-4 text-lg md:text-2xl text-white/80">Tips, deals, AI-powered planning, and community in one place</p>
+        <div class="mt-8 flex flex-col sm:flex-row gap-4">
+          <button class="bg-indigo-600 text-white px-6 py-3 rounded-full hover:bg-indigo-700">Start Chatting with AI Agent</button>
+          <button class="bg-white text-indigo-600 px-6 py-3 rounded-full hover:bg-gray-100">Find Your Tour Mates</button>
+        </div>
+        <form class="mt-8 flex bg-white/90 rounded-full overflow-hidden shadow-lg">
+          <input type="text" placeholder="Destination" class="py-2 px-4 w-40 focus:outline-none" />
+          <input type="date" class="py-2 px-4 focus:outline-none" />
+          <input type="range" min="0" max="10000" step="50" class="py-2 px-4" />
+          <button type="submit" class="bg-indigo-600 text-white px-4">Search Trips</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- AI Assistant Preview -->
+    <section id="ai" class="py-20 bg-white">
+      <div class="max-w-5xl mx-auto text-center">
+        <h2 class="text-3xl font-bold">AI Travel Assistant</h2>
+        <p class="mt-2 text-gray-600">Instant package & deal recommendations, visa processing, insurance, all via text & voice.</p>
+        <div class="mt-8 bg-gray-50 p-6 rounded-2xl shadow-inner">
+          <!-- Mock chat -->
+          <div class="space-y-4">
+            <div class="flex"><div class="bg-indigo-600 text-white px-4 py-2 rounded-tr-xl rounded-bl-xl">Hi AI, find me a cheap beach deal for Bali this June.</div></div>
+            <div class="flex justify-end"><div class="bg-gray-200 px-4 py-2 rounded-tl-xl rounded-br-xl">Sure! I found a 4-day package from Chologhuri starting at $350.</div></div>
+          </div>
+        </div>
+        <button class="mt-6 bg-indigo-600 text-white px-6 py-3 rounded-full hover:bg-indigo-700">Try Now</button>
+      </div>
+    </section>
+
+    <!-- Deals & Packages -->
+    <section id="deals" class="py-20">
+      <div class="max-w-7xl mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center">Featured Deals & Packages</h2>
+        <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <!-- Repeat deal card -->
+          <div class="bg-white rounded-xl shadow hover:shadow-lg overflow-hidden">
+            <img src="static/images/bali.jpg" alt="Deal" class="h-48 w-full object-cover" />
+            <div class="p-4">
+              <h3 class="font-semibold text-xl">Bali Summer Special</h3>
+              <p class="mt-2 text-gray-600">4 days, 3 nights package with hotel & flight.</p>
+              <p class="mt-2 text-indigo-600 font-bold">From $350</p>
+              <button class="mt-4 w-full bg-indigo-600 text-white py-2 rounded-full hover:bg-indigo-700">Book Now</button>
+            </div>
+          </div>
+          <!-- Add more cards similarly -->
+        </div>
+        <div class="mt-4 text-center space-x-4">
+          <div class="flex flex-wrap gap-3 justify-center">
+            <button
+              type="button"
+              class="px-5 py-2 bg-indigo-600 text-white font-medium rounded-full
+                    hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-400
+                    transition transform hover:scale-105 shadow-sm hover:shadow-lg">
+              Asia
+            </button>
+
+            <button
+              type="button"
+              class="px-5 py-2 bg-indigo-600 text-white font-medium rounded-full
+                    hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-400
+                    transition transform hover:scale-105 shadow-sm hover:shadow-lg">
+              Europe
+            </button>
+
+            <button
+              type="button"
+              class="px-5 py-2 bg-indigo-600 text-white font-medium rounded-full
+                    hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-400
+                    transition transform hover:scale-105 shadow-sm hover:shadow-lg">
+              Americas
+            </button>
+
+            <button
+              type="button"
+              class="px-5 py-2 bg-indigo-600 text-white font-medium rounded-full
+                    hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-400
+                    transition transform hover:scale-105 shadow-sm hover:shadow-lg">
+              Backpacker
+            </button>
+
+            <button
+              type="button"
+              class="px-5 py-2 bg-indigo-600 text-white font-medium rounded-full
+                    hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-400
+                    transition transform hover:scale-105 shadow-sm hover:shadow-lg">
+              Luxury
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Community Highlights -->
+    <section id="community" class="py-20 bg-white">
+      <div class="max-w-7xl mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center">Community Highlights</h2>
+        <div class="mt-8 space-y-12">
+          <!-- Trip Stories -->
+          <div>
+            <h3 class="text-2xl font-semibold">Latest Trip Stories</h3>
+            <div class="mt-4 flex overflow-x-auto space-x-6">
+              <div class="min-w-[250px] bg-gray-50 rounded-xl shadow p-4">
+                <img src="static/images/europe.jpg" alt="Story" class="h-32 w-full object-cover rounded-lg" />
+                <h4 class="mt-2 font-semibold">Backpacking Europe</h4>
+                <p class="text-gray-500 text-sm">by @wanderlust</p>
+                <a href="#" class="text-indigo-600 text-sm hover:underline">Read More</a>
+              </div>
+              <!-- More cards -->
+            </div>
+          </div>
+          <!-- Cost Snapshots -->
+          <div>
+            <h3 class="text-2xl font-semibold">Cost Breakdown Snapshots</h3>
+            <div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-6">
+              <div class="bg-gray-50 p-4 rounded-xl shadow">
+                <h4 class="font-semibold">How I did Bali for $500</h4>
+                <button class="mt-2 text-indigo-600 hover:underline text-sm">View Details</button>
+              </div>
+              <!-- More cards -->
+            </div>
+          </div>
+          <!-- Tips & Tricks -->
+          <div>
+            <h3 class="text-2xl font-semibold">Tips & Tricks Spotlight</h3>
+            <div class="mt-4 space-y-2 italic text-gray-600">
+              <p>“Pack cubes save so much space!”</p>
+              <p>“Always check local festivals for free events.”</p>
+              <p>“Use airline points for baggage.”</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Find Tour Mate -->
+    <section id="mates" class="py-20">
+      <div class="max-w-4xl mx-auto text-center">
+        <h2 class="text-3xl font-bold">Find Your Tour Mate</h2>
+        <p class="mt-2 text-gray-600">Search for like-minded travelers by destination, dates, age & style.</p>
+        <form class="mt-6 grid grid-cols-1 sm:grid-cols-4 gap-4">
+          <input type="text" placeholder="Destination" class="border rounded-lg py-2 px-3" />
+          <input type="date" class="border rounded-lg py-2 px-3" />
+          <input type="date" class="border rounded-lg py-2 px-3" />
+          <input type="text" placeholder="Travel Style" class="border rounded-lg py-2 px-3" />
+          <button class="sm:col-span-4 bg-indigo-600 text-white py-2 rounded-full hover:bg-indigo-700">Browse Profiles</button>
+        </form>
+        <div class="mt-6">
+          <h3 class="font-semibold">Cold-Calling Bot Promo</h3>
+          <p class="text-gray-600">Let our bot find you a trusted tour mate—fast.</p>
+          <button class="mt-2 bg-indigo-600 text-white py-2 px-6 rounded-full hover:bg-indigo-700">Get Matched</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="py-20 bg-white">
+      <div class="max-w-5xl mx-auto text-center">
+        <h2 class="text-3xl font-bold">How It Works</h2>
+        <div class="mt-10 grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div class="space-y-2">
+            <div class="h-16 w-16 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-bold text-xl">1</div>
+            <p>Chat with AI</p>
+          </div>
+          <div class="space-y-2">
+            <div class="h-16 w-16 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-bold text-xl">2</div>
+            <p>Browse & Customize</p>
+          </div>
+          <div class="space-y-2">
+            <div class="h-16 w-16 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-bold text-xl">3</div>
+            <p>Connect with Community</p>
+          </div>
+          <div class="space-y-2">
+            <div class="h-16 w-16 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-bold text-xl">4</div>
+            <p>Book & Go</p>
+          </div>
+        </div>
+        <div class="mt-8">
+          <div class="mx-auto max-w-xl rounded-xl shadow-lg overflow-hidden aspect-video">
+            <iframe
+              width="100%"
+              height="100%"
+              src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1&loop=1&playlist=dQw4w9WgXcQ"
+              title="YouTube video player"
+              frameborder="0"
+              allow="autoplay; encrypted-media; fullscreen"
+              allowfullscreen
+            ></iframe>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Vendors -->
+    <section id="vendors" class="py-20">
+      <div class="max-w-7xl mx-auto px-4 text-center">
+        <h2 class="text-3xl font-bold">Our Partners & Services</h2>
+        <div class="mt-8 flex flex-wrap justify-center items-center gap-8">
+          <img src="static/images/chologhuri.png" alt="Chologhuri" class="h-17 opacity-80 hover:opacity-100 transition" />
+          <!-- More logos -->
+        </div>
+        <ul class="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4 list-disc list-inside text-left mx-auto max-w-xl">
+          <li>Flights</li>
+          <li>Hotels</li>
+          <li>Trains & Buses</li>
+          <li>Visa Processing</li>
+          <li>Travel Insurance</li>
+          <li>Experiences & Tours</li>
+          <li>Car Rentals</li>
+          <li>Local SIM & Connectivity</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Testimonials & Stats & Blog & Newsletter Section -->
+    <section class="py-20 bg-white">
+      <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-12">
+        <!-- Testimonials -->
+        <div>
+          <h3 class="text-2xl font-bold">What Travelers Say</h3>
+          <div class="mt-6 space-y-6">
+            <blockquote class="bg-gray-50 p-6 rounded-xl shadow">
+              <p>“Found my best friend for trips—couldn’t ask for more!”</p>
+              <footer class="mt-2 text-sm text-gray-500">— @globetrotter</footer>
+            </blockquote>
+            <blockquote class="bg-gray-50 p-6 rounded-xl shadow">
+              <p>“AI agent planned my entire Europe trip in minutes.”</p>
+              <footer class="mt-2 text-sm text-gray-500">— @eurofanatic</footer>
+            </blockquote>
+          </div>
+        </div>
+        <!-- Stats / Blog / Newsletter -->
+        <div class="space-y-8">
+          <div class="grid grid-cols-2 gap-4 text-center">
+            <div><span class="text-3xl font-bold text-indigo-600">12K+</span><p>Travelers</p></div>
+            <div><span class="text-3xl font-bold text-indigo-600">4.5K+</span><p>Trips Shared</p></div>
+            <div><span class="text-3xl font-bold text-indigo-600">8K+</span><p>Packages Booked</p></div>
+            <div><span class="text-3xl font-bold text-indigo-600">5K+</span><p>Matches</p></div>
+          </div>
+          <div>
+            <h4 class="font-semibold">Latest from Blog</h4>
+            <ul class="mt-2 space-y-2">
+              <li><a href="#" class="hover:underline">Top 10 Backpacking Tips</a></li>
+              <li><a href="#" class="hover:underline">Saving on Flights</a></li>
+              <li><a href="#" class="hover:underline">Hidden Gems in Europe</a></li>
+            </ul>
+          </div>
+          <div class="bg-gray-50 p-6 rounded-xl text-center">
+            <h4 class="font-semibold">Stay Updated</h4>
+            <form class="mt-4 flex flex-col sm:flex-row gap-2">
+              <input type="email" placeholder="Your email" class="border rounded-lg py-2 px-3 w-full" />
+              <button class="bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700">Subscribe</button>
+            </form>
+            <div class="mt-2 text-sm text-gray-500">
+              <label><input type="checkbox" class="mr-1" /> New deals</label>
+              <label class="ml-2"><input type="checkbox" class="mr-1" /> Community highlights</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Mobile App Promo -->
+    <section class="py-20">
+      <div class="max-w-xl mx-auto text-center">
+        <h2 class="text-3xl font-bold">Get Our Mobile App</h2>
+        <p class="mt-2 text-gray-600">Experience TravelHive on the go.</p>
+        <div class="mt-6 flex justify-center gap-6">
+          <a href="#"><img src="static/images/appstore.png" alt="App Store" class="h-12" /></a>
+          <a href="#"><img src="static/images/playstore.png" alt="Play Store" class="h-12" /></a>
+        </div>
+        <div class="mt-4"><img src="static/images/qr.png" alt="QR Code" class="h-32 mx-auto" /></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-gray-200 py-12">
+    <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div>
+        <h4 class="font-semibold">Moncho.Travel</h4>
+        <p class="mt-2 text-sm">Connecting travelers worldwide.</p>
+      </div>
+      <div>
+        <h4 class="font-semibold">Quick Links</h4>
+        <ul class="mt-2 space-y-1 text-sm">
+          <li><a href="#about" class="hover:underline">About</a></li>
+          <li><a href="#faq" class="hover:underline">FAQ</a></li>
+          <li><a href="#careers" class="hover:underline">Careers</a></li>
+          <li><a href="#legal" class="hover:underline">Terms & Privacy</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-semibold">Follow Us</h4>
+        <div class="mt-2 flex space-x-4">
+          <a href="#" class="hover:text-white"><i data-feather="facebook"></i></a>
+          <a href="#" class="hover:text-white"><i data-feather="instagram"></i></a>
+          <a href="#" class="hover:text-white"><i data-feather="twitter"></i></a>
+          <a href="#" class="hover:text-white"><i data-feather="youtube"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="mt-8 text-center text-sm text-gray-500">&copy; 2025 TravelHive. All rights reserved.</div>
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => feather.replace());
+    function startVoice() {
+      alert("Voice interface coming soon!");
+    }
+  </script>
+
+</body>
+</html>

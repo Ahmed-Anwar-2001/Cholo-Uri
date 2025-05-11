@@ -27,6 +27,9 @@ SECRET_KEY = 'django-insecure-1=^oj@km1t9d=0$dg1wyh(_#0ue)g0j2p3hxnhv!sidce032@z
 DEBUG = True
 
 ALLOWED_HOSTS = []
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SECURE   = True  # if running on HTTPS
+SESSION_COOKIE_AGE      = 1209600  # e.g. 2 weeks
 
 
 # Application definition

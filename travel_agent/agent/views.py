@@ -19,7 +19,7 @@ from .models import *
 # Create your views here.
 
 def home(request):
-    return redirect(login)
+    return render(request, 'home\home.html')
 
 
 # views.py
@@ -72,7 +72,7 @@ def login(request):
         next_url = request.GET.get('next', '')
         if next_url and url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}):
             return redirect(next_url)
-        return redirect('dashboard')
+        return redirect('home')
 
     # GET
     return render(request, 'auth/login.html')
