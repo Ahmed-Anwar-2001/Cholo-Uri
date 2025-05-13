@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-P8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TravelConnect - Your Adventure Community</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Light grayish-blue background */
+        }
+        /* Custom scrollbar for webkit browsers */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; /* slate-300 */
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; /* slate-500 */
+        }
+        .icon-hover-effect {
+            transition: transform 0.2s ease-in-out, color 0.2s ease-in-out;
+        }
+        .icon-hover-effect:hover {
+            transform: scale(1.1);
+        }
+        .card-hover-effect {
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+        .card-hover-effect:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .btn-primary {
+            @apply bg-cyan-600 hover:bg-cyan-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-all duration-300 ease-in-out transform hover:scale-105;
+        }
+        .btn-secondary {
+            @apply bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-all duration-300 ease-in-out transform hover:scale-105;
+        }
+        .btn-outline {
+            @apply bg-transparent hover:bg-cyan-50 text-cyan-700 font-semibold py-2 px-4 border border-cyan-500 hover:border-transparent rounded-lg transition-all duration-300 ease-in-out;
+        }
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.6); /* More opaque for better readability */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .sticky-header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+         /* For mobile menu transition */
+        #mobileMenu.hidden { display: none; }
+
+        /* Left sidebar toggle animation */
+        #leftSidebar.translate-x-0 { transition: transform 0.3s ease-in-out; }
+        #leftSidebar.-translate-x-full { transition: transform 0.3s ease-in-out; }
+
+        /* AI Chat bubble animation */
+        .chat-bubble {
+            animation: fadeIn 0.5s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <div id="app-container" class="min-h-screen">
+
+        <header id="mainHeader" class="sticky-header bg-white/80 backdrop-blur-md shadow-lg">
+            <div class="container mx-auto px-4 py-3">
+                <div class="flex justify-between items-center">
+                    <a href="#" class="text-3xl font-bold text-cyan-700 hover:text-cyan-800 transition-colors">
+                        Travel<span class="text-orange-500">Connect</span>
+                    </a>
+
+                    <div class="hidden md:flex flex-grow max-w-xl mx-4">
+                        <div class="relative w-full">
+                            <input type="search" placeholder="Search destinations, users, deals..." class="w-full py-2.5 px-4 pl-10 text-sm text-slate-700 bg-slate-100 border border-slate-300 rounded-full focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-shadow">
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                <svg class="w-5 h-5 text-slate-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path></svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <nav class="flex items-center space-x-3 md:space-x-5">
+                        <a href="#" class="hidden lg:inline-block text-slate-600 hover:text-cyan-600 font-medium transition-colors icon-hover-effect">Explore</a>
+                        <a href="#ai-chat-section" class="hidden lg:inline-block text-slate-600 hover:text-cyan-600 font-medium transition-colors icon-hover-effect">Plan My Trip</a>
+                        <a href="#deals-section" class="hidden lg:inline-block text-slate-600 hover:text-cyan-600 font-medium transition-colors icon-hover-effect">Deals</a>
+                        <a href="#community-section" class="hidden lg:inline-block text-slate-600 hover:text-cyan-600 font-medium transition-colors icon-hover-effect">Community</a>
+
+                        <div class="relative">
+                            <button id="createButton" class="btn-secondary p-2 rounded-full shadow-lg hover:shadow-xl focus:outline-none">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                            </button>
+                            <div id="createDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-xl z-20 py-1 border border-slate-200">
+                                <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-cyan-50 hover:text-cyan-700 transition-colors">New Post</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-cyan-50 hover:text-cyan-700 transition-colors">Organize a Trip</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-cyan-50 hover:text-cyan-700 transition-colors">Ask a Question</a>
+                            </div>
+                        </div>
+
+                        <button title="Notifications" class="relative text-slate-500 hover:text-cyan-600 icon-hover-effect p-1">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                            <span class="absolute top-0 right-0 block h-2.5 w-2.5 rounded-full ring-2 ring-white bg-red-500"></span>
+                        </button>
+
+                        <button title="Messages" class="relative text-slate-500 hover:text-cyan-600 icon-hover-effect p-1">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                             <span class="absolute top-0 right-0 block h-2.5 w-2.5 rounded-full ring-2 ring-white bg-red-500"></span>
+                        </button>
+
+                        <div class="relative">
+                            <button id="profileButton" class="focus:outline-none">
+                                <img src="https://placehold.co/40x40/A0AEC0/FFFFFF?text=U" alt="User Avatar" class="w-10 h-10 rounded-full border-2 border-cyan-500 hover:opacity-90 transition-opacity">
+                            </button>
+                            <div id="profileDropdown" class="hidden absolute right-0 mt-2 w-56 bg-white rounded-md shadow-xl z-20 py-1 border border-slate-200">
+                                <div class="px-4 py-3 border-b border-slate-200">
+                                    <p class="text-sm font-semibold text-slate-700">John Doe</p>
+                                    <p class="text-xs text-slate-500">john.doe@example.com</p>
+                                </div>
+                                <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-cyan-50 hover:text-cyan-700 transition-colors">View Profile</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-cyan-50 hover:text-cyan-700 transition-colors">My Trips</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-cyan-50 hover:text-cyan-700 transition-colors">My Bookings</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-cyan-50 hover:text-cyan-700 transition-colors">Saved Posts/Deals</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-cyan-50 hover:text-cyan-700 transition-colors">Account Settings</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-red-500 hover:bg-red-50 hover:text-red-700 transition-colors">Logout</a>
+                            </div>
+                        </div>
+
+                        <button id="mobileMenuButton" class="md:hidden text-slate-600 hover:text-cyan-600 focus:outline-none p-1">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" id="menuIconOpen"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                            <svg class="w-7 h-7 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" id="menuIconClose"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </nav>
+                </div>
+
+                <div id="mobileMenu" class="hidden md:hidden mt-3 py-2 border-t border-slate-200">
+                    <input type="search" placeholder="Search..." class="w-full py-2.5 px-4 text-sm text-slate-700 bg-slate-100 border border-slate-300 rounded-full focus:outline-none focus:ring-2 focus:ring-cyan-500 mb-3">
+                    <a href="#" class="block py-2 px-3 text-slate-600 hover:bg-cyan-50 hover:text-cyan-700 rounded-md transition-colors">Explore</a>
+                    <a href="#ai-chat-section" class="block py-2 px-3 text-slate-600 hover:bg-cyan-50 hover:text-cyan-700 rounded-md transition-colors">Plan My Trip</a>
+                    <a href="#deals-section" class="block py-2 px-3 text-slate-600 hover:bg-cyan-50 hover:text-cyan-700 rounded-md transition-colors">Deals</a>
+                    <a href="#community-section" class="block py-2 px-3 text-slate-600 hover:bg-cyan-50 hover:text-cyan-700 rounded-md transition-colors">Community</a>
+                </div>
+            </div>
+        </header>
+
+        <main class="container mx-auto px-2 sm:px-4 py-6">
+            <div class="lg:flex lg:space-x-6">
+
+                <aside id="leftSidebar" class="fixed inset-y-0 left-0 transform -translate-x-full lg:relative lg:translate-x-0 lg:w-1/4 xl:w-1/5 bg-white shadow-md rounded-xl p-5 transition-transform duration-300 ease-in-out z-40 lg:sticky lg:top-24 h-screen-minus-header overflow-y-auto">
+                    <button id="closeLeftSidebar" class="lg:hidden absolute top-4 right-4 text-slate-500 hover:text-red-500">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                    <div class="flex items-center space-x-3 mb-6 pb-4 border-b border-slate-200">
+                        <img src="https://placehold.co/50x50/A0AEC0/FFFFFF?text=U" alt="User Avatar" class="w-12 h-12 rounded-full border-2 border-orange-500">
+                        <div>
+                            <h3 class="font-semibold text-slate-800">John Doe</h3>
+                            <a href="#" class="text-xs text-cyan-600 hover:underline">View Profile</a>
+                        </div>
+                    </div>
+
+                    <nav class="space-y-2 mb-6">
+                        <a href="#" class="flex items-center space-x-3 px-3 py-2.5 bg-cyan-50 text-cyan-700 font-semibold rounded-lg transition-colors group">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg>
+                            <span>My Feed</span>
+                        </a>
+                        <a href="#" class="flex items-center space-x-3 px-3 py-2.5 text-slate-600 hover:bg-slate-100 hover:text-slate-800 rounded-lg transition-colors group">
+                            <svg class="w-5 h-5 text-slate-400 group-hover:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                            <span>Connections' Activity</span>
+                        </a>
+                        <a href="#" class="flex items-center space-x-3 px-3 py-2.5 text-slate-600 hover:bg-slate-100 hover:text-slate-800 rounded-lg transition-colors group">
+                             <svg class="w-5 h-5 text-slate-400 group-hover:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                            <span>Trending</span>
+                        </a>
+                        <a href="#" class="flex items-center space-x-3 px-3 py-2.5 text-slate-600 hover:bg-slate-100 hover:text-slate-800 rounded-lg transition-colors group">
+                            <svg class="w-5 h-5 text-slate-400 group-hover:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+                            <span>Saved Items</span>
+                        </a>
+                    </nav>
+
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-slate-700 mb-3">My Travel Interests</h4>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="text-xs bg-cyan-100 text-cyan-800 px-2.5 py-1 rounded-full cursor-pointer hover:bg-cyan-200 transition-colors">Adventure</span>
+                            <span class="text-xs bg-orange-100 text-orange-800 px-2.5 py-1 rounded-full cursor-pointer hover:bg-orange-200 transition-colors">Beach</span>
+                            <span class="text-xs bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full cursor-pointer hover:bg-emerald-200 transition-colors">Budget</span>
+                            <span class="text-xs bg-purple-100 text-purple-800 px-2.5 py-1 rounded-full cursor-pointer hover:bg-purple-200 transition-colors">Cultural</span>
+                            <span class="text-xs bg-rose-100 text-rose-800 px-2.5 py-1 rounded-full cursor-pointer hover:bg-rose-200 transition-colors">Luxury</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-slate-700 mb-3">My Groups</h4>
+                        <ul class="space-y-2">
+                            <li><a href="#" class="text-sm text-slate-600 hover:text-cyan-600 hover:underline">Weekend Hikers Club</a></li>
+                            <li><a href="#" class="text-sm text-slate-600 hover:text-cyan-600 hover:underline">Solo Female Travelers</a></li>
+                            <li><a href="#" class="text-sm text-slate-600 hover:text-cyan-600 hover:underline">Asian Foodies on Tour</a></li>
+                        </ul>
+                    </div>
+                    
+                    <button class="w-full btn-primary mb-4">Organize New Trip</button>
+                    <button class="w-full btn-outline">Explore Chologhuri Services</button>
+                </aside>
+                 <button id="desktopToggleLeftSidebar" class="hidden lg:block fixed top-28 left-0 z-50 p-2 bg-white/80 backdrop-blur-md shadow-lg rounded-r-lg hover:bg-slate-100 transition-colors" title="Toggle Sidebar">
+                    <svg id="desktopToggleLeftSidebarIconOpen" class="w-5 h-5 text-cyan-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path></svg>
+                    <svg id="desktopToggleLeftSidebarIconClose" class="w-5 h-5 text-cyan-700 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path></svg>
+                </button>
+
+
+                <section id="mainFeed" class="flex-grow lg:w-1/2 xl:w-3/5 space-y-6">
+                    <div class="bg-white shadow-lg rounded-xl p-5 card-hover-effect">
+                        <h2 class="text-xl font-semibold text-slate-800 mb-4">Share Your Journey!</h2>
+                        <textarea class="w-full p-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 resize-none" rows="3" placeholder="What's on your mind, John?"></textarea>
+                        <div class="flex justify-between items-center mt-3">
+                            <div class="flex space-x-2">
+                                <button title="Add Photo" class="text-slate-500 hover:text-cyan-600 p-2 rounded-full hover:bg-slate-100 transition-colors icon-hover-effect">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                </button>
+                                <button title="Add Video" class="text-slate-500 hover:text-cyan-600 p-2 rounded-full hover:bg-slate-100 transition-colors icon-hover-effect">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                </button>
+                                <button title="Tag Location" class="text-slate-500 hover:text-cyan-600 p-2 rounded-full hover:bg-slate-100 transition-colors icon-hover-effect">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                </button>
+                            </div>
+                            <button class="btn-primary py-2.5 px-6">Post</button>
+                        </div>
+                    </div>
+
+                    <div class="flex space-x-2 overflow-x-auto pb-2">
+                        <button class="bg-cyan-600 text-white px-4 py-1.5 rounded-full text-sm font-medium shadow-sm">All Posts</button>
+                        <button class="bg-white text-slate-600 hover:bg-slate-100 px-4 py-1.5 rounded-full text-sm font-medium shadow-sm border border-slate-200">Following</button>
+                        <button class="bg-white text-slate-600 hover:bg-slate-100 px-4 py-1.5 rounded-full text-sm font-medium shadow-sm border border-slate-200">Experiences</button>
+                        <button class="bg-white text-slate-600 hover:bg-slate-100 px-4 py-1.5 rounded-full text-sm font-medium shadow-sm border border-slate-200">Images</button>
+                        <button class="bg-white text-slate-600 hover:bg-slate-100 px-4 py-1.5 rounded-full text-sm font-medium shadow-sm border border-slate-200">Organized Trips</button>
+                    </div>
+
+                    <div class="bg-white shadow-lg rounded-xl overflow-hidden card-hover-effect">
+                        <div class="p-5">
+                            <div class="flex items-center space-x-3 mb-4">
+                                <img src="https://placehold.co/40x40/fbbf24/FFFFFF?text=A" alt="Alice Avatar" class="w-10 h-10 rounded-full">
+                                <div>
+                                    <p class="font-semibold text-slate-800">Alice Wonderland</p>
+                                    <p class="text-xs text-slate-500">Posted 2 hours ago · <span class="text-cyan-600">Sajek Valley</span></p>
+                                </div>
+                            </div>
+                            <p class="text-slate-700 mb-3 leading-relaxed">
+                                Just got back from an amazing trip to Sajek Valley! The clouds, the hills, the tranquility - absolutely breathtaking. Highly recommend staying in one of the local cottages for the full experience. Sunrise was magical! 🌄
+                            </p>
+                            <img src="https://placehold.co/600x400/34d399/FFFFFF?text=Sajek+View" alt="Sajek Valley" class="rounded-lg mb-3 w-full h-auto object-cover">
+                            
+                            <div class="py-2 px-3 bg-emerald-50 border border-emerald-200 rounded-lg mb-3">
+                                <h5 class="font-semibold text-emerald-700 text-sm mb-1">💡 Tip & Trick:</h5>
+                                <p class="text-xs text-emerald-600">Wake up super early (around 5 AM) to catch the best cloud sea view. It's worth it!</p>
+                            </div>
+                            <div class="py-2 px-3 bg-amber-50 border border-amber-200 rounded-lg">
+                                <h5 class="font-semibold text-amber-700 text-sm mb-1">💰 Cost Experience:</h5>
+                                <p class="text-xs text-amber-600">Approx. $100 for 2 days/1 night (transport, food, accommodation).</p>
+                            </div>
+                        </div>
+                        <div class="px-5 py-3 bg-slate-50 border-t border-slate-200 flex justify-between items-center">
+                            <div class="flex space-x-4">
+                                <button class="flex items-center space-x-1 text-slate-500 hover:text-red-500 transition-colors icon-hover-effect">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                                    <span class="text-sm">125</span>
+                                </button>
+                                <button class="flex items-center space-x-1 text-slate-500 hover:text-cyan-600 transition-colors icon-hover-effect">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                                    <span class="text-sm">32</span>
+                                </button>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="text-slate-500 hover:text-cyan-600 transition-colors icon-hover-effect" title="Save Post">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+                                </button>
+                                <button class="text-slate-500 hover:text-cyan-600 transition-colors icon-hover-effect" title="Share">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342A6.001 6.001 0 006 17l-5.303 2.272A1.002 1.002 0 002 20V4a1 1 0 00-1-1h16a1 1 0 001-1V3a1 1 0 00-1-1H2a2 2 0 00-2 2v16c0 .553.448 1 .998 1 .176 0 .348-.045.5-.128L8.684 13.342z"></path></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="community-section" class="bg-white shadow-lg rounded-xl overflow-hidden card-hover-effect">
+                        <div class="p-5">
+                            <div class="flex items-center space-x-3 mb-4">
+                                <img src="https://placehold.co/40x40/8b5cf6/FFFFFF?text=B" alt="Bob Avatar" class="w-10 h-10 rounded-full">
+                                <div>
+                                    <p class="font-semibold text-slate-800">Bob The Builder</p>
+                                    <p class="text-xs text-slate-500">Organizing a trip · Posted 1 day ago</p>
+                                </div>
+                                <span class="ml-auto text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full font-medium">Trip Organization</span>
+                            </div>
+                            <h3 class="text-lg font-semibold text-cyan-700 mb-2">Trekking Adventure to Keokradong!</h3>
+                            <p class="text-slate-700 mb-3 leading-relaxed">
+                                Calling all adventure seekers! I'm planning a 3-day trek to Keokradong next month (June 15-17). Looking for 5-7 enthusiastic folks to join. We'll cover transport from Bandarban, local guides, food, and basic stays.
+                            </p>
+                            <div class="grid grid-cols-2 gap-3 text-sm mb-4">
+                                <p><strong class="text-slate-600">🗓️ Dates:</strong> June 15 - June 17, 2025</p>
+                                <p><strong class="text-slate-600">📍 Destination:</strong> Keokradong, Bandarban</p>
+                                <p><strong class="text-slate-600">👥 Group Size:</strong> 5-7 people</p>
+                                <p><strong class="text-slate-600">💰 Est. Cost:</strong> $120 per person</p>
+                            </div>
+                            <div class="mb-4">
+                                <span class="text-sm font-medium text-slate-600">Spots Available: </span>
+                                <span class="text-lg font-bold text-orange-500">3</span> / 7
+                                <div class="w-full bg-slate-200 rounded-full h-2.5 mt-1">
+                                    <div class="bg-orange-500 h-2.5 rounded-full" style="width: 57%"></div> </div>
+                            </div>
+                             <button class="w-full btn-secondary">Request to Join Trip</button>
+                        </div>
+                         <div class="px-5 py-3 bg-slate-50 border-t border-slate-200 flex justify-between items-center">
+                            <div class="flex space-x-4">
+                                <button class="flex items-center space-x-1 text-slate-500 hover:text-red-500 transition-colors icon-hover-effect">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                                    <span class="text-sm">88</span>
+                                </button>
+                                <button class="flex items-center space-x-1 text-slate-500 hover:text-cyan-600 transition-colors icon-hover-effect">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                                    <span class="text-sm">15</span>
+                                </button>
+                            </div>
+                            <button class="text-slate-500 hover:text-cyan-600 transition-colors icon-hover-effect" title="Share Trip">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342A6.001 6.001 0 006 17l-5.303 2.272A1.002 1.002 0 002 20V4a1 1 0 00-1-1h16a1 1 0 001-1V3a1 1 0 00-1-1H2a2 2 0 00-2 2v16c0 .553.448 1 .998 1 .176 0 .348-.045.5-.128L8.684 13.342z"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center pt-4">
+                        <button class="btn-outline">Load More Posts</button>
+                    </div>
+
+                </section>
+
+                <aside id="rightSidebar" class="hidden xl:block lg:w-1/4 xl:w-1/4 space-y-6 lg:sticky lg:top-24 h-screen-minus-header overflow-y-auto p-1">
+                    <div id="ai-chat-section" class="bg-white shadow-lg rounded-xl p-5 glassmorphism border-none">
+                        <div class="flex items-center space-x-2 mb-4">
+                            <svg class="w-8 h-8 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.755 4 3.92C16 13.09 14.828 15 12 15c-.001 0-.001 0 0 0h-.034S10.022 15 8 13c-1.512-1.512-1.562-3.245-1.562-4.515 0-1.136.47-2.063 1.29-2.748M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <h2 class="text-xl font-semibold text-slate-800">AI Travel Assistant</h2>
+                        </div>
+                        <p class="text-sm text-slate-600 mb-3">Hi John, how can I help you plan your next adventure?</p>
+                        <div id="aiChatMessages" class="h-48 overflow-y-auto mb-3 p-2 bg-slate-50 rounded-lg border border-slate-200 space-y-2">
+                            <div class="flex justify-start chat-bubble">
+                                <div class="bg-cyan-500 text-white text-sm p-2.5 rounded-lg rounded-bl-none max-w-xs shadow">
+                                    Ask me anything! e.g., "Find packages for Cox's Bazar"
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex space-x-2">
+                            <input type="text" id="aiChatInput" placeholder="Type or say your command..." class="flex-grow p-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 text-sm">
+                            <button id="aiChatSend" class="btn-primary p-2.5" title="Send">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                            </button>
+                        </div>
+                        <div class="mt-2 text-center">
+                             <button class="text-xs text-slate-500 hover:text-cyan-600 icon-hover-effect" title="Voice Command">
+                                <svg class="w-5 h-5 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
+                                Voice Command
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="deals-section" class="bg-white shadow-lg rounded-xl p-5 card-hover-effect">
+                        <h3 class="text-lg font-semibold text-slate-800 mb-3">🔥 Hot Deals & Packages</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-start space-x-3 p-3 bg-slate-50 rounded-lg hover:shadow-md transition-shadow">
+                                <img src="https://placehold.co/80x80/f97316/FFFFFF?text=Deal+1" alt="Deal 1" class="w-20 h-20 rounded-md object-cover">
+                                <div>
+                                    <h4 class="font-semibold text-cyan-700 hover:underline cursor-pointer">Cox's Bazar Getaway</h4>
+                                    <p class="text-xs text-slate-500 mb-1">3 Days, 2 Nights - Incl. Hotel & Breakfast</p>
+                                    <p class="text-sm font-bold text-orange-600">$150 <span class="text-xs text-slate-500 line-through">$200</span></p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3 p-3 bg-slate-50 rounded-lg hover:shadow-md transition-shadow">
+                                <img src="https://placehold.co/80x80/10b981/FFFFFF?text=Deal+2" alt="Deal 2" class="w-20 h-20 rounded-md object-cover">
+                                <div>
+                                    <h4 class="font-semibold text-cyan-700 hover:underline cursor-pointer">Sylhet Tea Garden Tour</h4>
+                                    <p class="text-xs text-slate-500 mb-1">2 Days, 1 Night - Scenic Beauty</p>
+                                    <p class="text-sm font-bold text-orange-600">$99 <span class="text-xs text-slate-500 line-through">$130</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="#" class="block text-center mt-4 text-sm text-cyan-600 hover:underline font-medium">View All Deals →</a>
+                    </div>
+                    
+                    <div class="bg-white shadow-lg rounded-xl p-5 card-hover-effect">
+                        <h3 class="text-lg font-semibold text-slate-800 mb-3">Travel Essentials</h3>
+                        <div class="space-y-2">
+                            <button class="w-full btn-outline text-sm flex items-center justify-center space-x-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+                                <span>Visa Processing</span>
+                            </button>
+                            <button class="w-full btn-outline text-sm flex items-center justify-center space-x-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                                <span>Travel Insurance</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white shadow-lg rounded-xl p-5 card-hover-effect">
+                        <h3 class="text-lg font-semibold text-slate-800 mb-3">Find Travel Mates</h3>
+                        <p class="text-sm text-slate-600 mb-3">Looking for companions for your next trip? Let us help!</p>
+                        <input type="text" placeholder="Destination (e.g., Saint Martin)" class="w-full p-2 border border-slate-300 rounded-lg mb-2 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                        <button class="w-full btn-primary text-sm">Search Mates</button>
+                        <p class="text-xs text-slate-500 mt-2 text-center">Our AI can also help find like-minded travelers!</p>
+                    </div>
+                </aside>
+
+            </div>
+        </main>
+
+        <footer class="bg-slate-800 text-slate-300 mt-12 py-10">
+            <div class="container mx-auto px-4">
+                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 mb-8">
+                    <div>
+                        <h5 class="font-semibold text-white mb-3">TravelConnect</h5>
+                        <ul class="space-y-2 text-sm">
+                            <li><a href="#" class="hover:text-cyan-400 transition-colors">About Us</a></li>
+                            <li><a href="#" class="hover:text-cyan-400 transition-colors">How it Works</a></li>
+                            <li><a href="#" class="hover:text-cyan-400 transition-colors">Careers</a></li>
+                            <li><a href="#" class="hover:text-cyan-400 transition-colors">Press</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold text-white mb-3">Community</h5>
+                        <ul class="space-y-2 text-sm">
+                            <li><a href="#" class="hover:text-cyan-400 transition-colors">Guidelines</a></li>
+                            <li><a href="#" class="hover:text-cyan-400 transition-colors">Forums</a></li>
+                            <li><a href="#" class="hover:text-cyan-400 transition-colors">Find Buddies</a></li>
+                            <li><a href="#" class="hover:text-cyan-400 transition-colors">Events</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold text-white mb-3">Support</h5>
+                        <ul class="space-y-2 text-sm">
+                            <li><a href="#" class="hover:text-cyan-400 transition-colors">FAQ</a></li>
+                            <li><a href="#" class="hover:text-cyan-400 transition-colors">Contact Us</a></li>
+                            <li><a href="#" class="hover:text-cyan-400 transition-colors">Trust & Safety</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold text-white mb-3">Legal</h5>
+                        <ul class="space-y-2 text-sm">
+                            <li><a href="#" class="hover:text-cyan-400 transition-colors">Terms of Service</a></li>
+                            <li><a href="#" class="hover:text-cyan-400 transition-colors">Privacy Policy</a></li>
+                            <li><a href="#" class="hover:text-cyan-400 transition-colors">Cookie Policy</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-span-2 lg:col-span-1">
+                        <h5 class="font-semibold text-white mb-3">Our Valued Partner</h5>
+                        <img src="https://placehold.co/150x50/FFFFFF/000000?text=CholoGhuri+Logo" alt="Chologhuri Logo" class="bg-white p-2 rounded-md">
+                        <p class="text-xs mt-2">Powered by Chologhuri for exclusive deals and services.</p>
+                    </div>
+                </div>
+                <div class="border-t border-slate-700 pt-8 flex flex-col md:flex-row justify-between items-center">
+                    <p class="text-sm mb-4 md:mb-0">&copy; <span id="currentYear"></span> TravelConnect. All rights reserved.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-slate-400 hover:text-white transition-colors icon-hover-effect"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clip-rule="evenodd" /></svg></a>
+                        <a href="#" class="text-slate-400 hover:text-white transition-colors icon-hover-effect"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12.315 2.014a.828.828 0 01.574 0 9.953 9.953 0 017.099 7.099c.966 2.236.487 4.83-.99 6.74l.494 1.858a.828.828 0 01-1.17 1.17l-1.858-.494a9.953 9.953 0 01-6.74.99 9.953 9.953 0 01-7.099-7.099A9.953 9.953 0 015.216 5.113a9.953 9.953 0 017.099-3.099zm0 1.656a8.3 8.3 0 00-5.89 2.573 8.3 8.3 0 00-2.574 5.89 8.3 8.3 0 002.573 5.89 8.3 8.3 0 005.89 2.574 8.3 8.3 0 005.89-2.573 8.3 8.3 0 002.574-5.89 8.3 8.3 0 00-2.573-5.89 8.3 8.3 0 00-5.89-2.574zm0 3.312a4.981 4.981 0 110 9.962 4.981 4.981 0 010-9.962zm0 1.656a3.325 3.325 0 100 6.65 3.325 3.325 0 000-6.65zm5.844-2.484a1.245 1.245 0 11-2.49 0 1.245 1.245 0 012.49 0z" clip-rule="evenodd" /></svg></a>
+                        <a href="#" class="text-slate-400 hover:text-white transition-colors icon-hover-effect"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" /></svg></a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script defer>
+        // DOM Elements
+        const mobileMenuButton = document.getElementById('mobileMenuButton');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const menuIconOpen = document.getElementById('menuIconOpen');
+        const menuIconClose = document.getElementById('menuIconClose');
+
+        const profileButton = document.getElementById('profileButton');
+        const profileDropdown = document.getElementById('profileDropdown');
+
+        const createButton = document.getElementById('createButton');
+        const createDropdown = document.getElementById('createDropdown');
+
+        const leftSidebar = document.getElementById('leftSidebar');
+        const closeLeftSidebarButton = document.getElementById('closeLeftSidebar');
+        const desktopToggleLeftSidebar = document.getElementById('desktopToggleLeftSidebar');
+        const desktopToggleLeftSidebarIconOpen = document.getElementById('desktopToggleLeftSidebarIconOpen');
+        const desktopToggleLeftSidebarIconClose = document.getElementById('desktopToggleLeftSidebarIconClose');
+        const mainFeed = document.getElementById('mainFeed'); // To adjust margin when sidebar collapses
+
+        const aiChatInput = document.getElementById('aiChatInput');
+        const aiChatSend = document.getElementById('aiChatSend');
+        const aiChatMessages = document.getElementById('aiChatMessages');
+
+        const currentYearSpan = document.getElementById('currentYear');
+
+        // Set current year in footer
+        if (currentYearSpan) {
+            currentYearSpan.textContent = new Date().getFullYear();
+        }
+        
+        // --- Event Listeners ---
+
+        // Mobile Menu Toggle
+        if (mobileMenuButton && mobileMenu && menuIconOpen && menuIconClose) {
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+                menuIconOpen.classList.toggle('hidden');
+                menuIconClose.classList.toggle('hidden');
+            });
+        }
+        
+        // Profile Dropdown Toggle
+        if (profileButton && profileDropdown) {
+            profileButton.addEventListener('click', (event) => {
+                event.stopPropagation(); // Prevent click from bubbling to document
+                profileDropdown.classList.toggle('hidden');
+                if (!createDropdown.classList.contains('hidden')) {
+                    createDropdown.classList.add('hidden');
+                }
+            });
+        }
+
+        // Create Button Dropdown Toggle
+        if (createButton && createDropdown) {
+            createButton.addEventListener('click', (event) => {
+                event.stopPropagation();
+                createDropdown.classList.toggle('hidden');
+                 if (!profileDropdown.classList.contains('hidden')) {
+                    profileDropdown.classList.add('hidden');
+                }
+            });
+        }
+        
+        // Close dropdowns if clicked outside
+        document.addEventListener('click', (event) => {
+            if (profileDropdown && !profileDropdown.classList.contains('hidden') && !profileButton.contains(event.target) && !profileDropdown.contains(event.target)) {
+                profileDropdown.classList.add('hidden');
+            }
+            if (createDropdown && !createDropdown.classList.contains('hidden') && !createButton.contains(event.target) && !createDropdown.contains(event.target)) {
+                createDropdown.classList.add('hidden');
+            }
+        });
+
+        // Left Sidebar Toggle (Mobile)
+        // The mobile menu button also acts as the left sidebar toggle on smaller screens
+        if (mobileMenuButton && leftSidebar) {
+             mobileMenuButton.addEventListener('click', () => {
+                // This is a bit of a dual purpose for the mobile menu button now.
+                // If the main mobile menu is open, this click is handled above.
+                // If we want this to *also* open the left sidebar on mobile, we need different logic.
+                // For now, let's assume the left sidebar is primarily for larger screens or opened via a dedicated button if needed on mobile.
+                // The current setup has the left sidebar fixed open on lg screens.
+                // To make it toggleable on mobile, we'd need a separate hamburger for it or repurpose the main one.
+                // Let's make the main hamburger also control the left sidebar visibility on mobile.
+                if (window.innerWidth < 1024) { // lg breakpoint
+                    leftSidebar.classList.toggle('-translate-x-full');
+                    leftSidebar.classList.toggle('translate-x-0');
+                }
+            });
+        }
+        if (closeLeftSidebarButton && leftSidebar) {
+            closeLeftSidebarButton.addEventListener('click', () => {
+                 if (window.innerWidth < 1024) {
+                    leftSidebar.classList.add('-translate-x-full');
+                    leftSidebar.classList.remove('translate-x-0');
+                }
+            });
+        }
+
+        // Left Sidebar Toggle (Desktop)
+        if (desktopToggleLeftSidebar && leftSidebar && mainFeed) {
+            desktopToggleLeftSidebar.addEventListener('click', () => {
+                leftSidebar.classList.toggle('lg:w-1/4');
+                leftSidebar.classList.toggle('xl:w-1/5');
+                leftSidebar.classList.toggle('lg:w-0'); // Collapse
+                leftSidebar.classList.toggle('p-5');
+                leftSidebar.classList.toggle('p-0'); // Remove padding when collapsed
+                leftSidebar.classList.toggle('overflow-hidden'); // Hide content when collapsed
+
+                // Toggle visibility of sidebar content (optional, could also just shrink width)
+                Array.from(leftSidebar.children).forEach(child => {
+                    if (child !== desktopToggleLeftSidebar && child !== closeLeftSidebarButton) { // Don't hide the toggle itself
+                        child.classList.toggle('hidden');
+                    }
+                });
+                
+                desktopToggleLeftSidebarIconOpen.classList.toggle('hidden');
+                desktopToggleLeftSidebarIconClose.classList.toggle('hidden');
+
+                // Adjust main feed margin (this part can be tricky and might need more refinement)
+                if (leftSidebar.classList.contains('lg:w-0')) {
+                    mainFeed.classList.add('lg:ml-0'); // If sidebar is collapsed
+                    desktopToggleLeftSidebar.classList.remove('left-0');
+                    desktopToggleLeftSidebar.classList.add('left-0'); // Keep it at the edge
+                } else {
+                    mainFeed.classList.remove('lg:ml-0'); // If sidebar is open
+                    desktopToggleLeftSidebar.classList.remove('left-0');
+                    // The button's position is relative to the viewport if fixed, or its parent.
+                    // When sidebar is open, it should be next to it.
+                    // This might need more complex logic based on actual sidebar width.
+                    // For simplicity, we'll keep it at left-0 and rely on its visual placement.
+                }
+            });
+        }
+
+
+        // AI Chat Functionality (Simple Mock)
+        if (aiChatSend && aiChatInput && aiChatMessages) {
+            const addMessageToChat = (message, isUser) => {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('flex', 'chat-bubble');
+                messageDiv.classList.add(isUser ? 'justify-end' : 'justify-start');
+                
+                const bubbleDiv = document.createElement('div');
+                bubbleDiv.classList.add('text-sm', 'p-2.5', 'rounded-lg', 'max-w-xs', 'shadow');
+                if (isUser) {
+                    bubbleDiv.classList.add('bg-orange-500', 'text-white', 'rounded-br-none');
+                } else {
+                    bubbleDiv.classList.add('bg-cyan-500', 'text-white', 'rounded-bl-none');
+                }
+                bubbleDiv.textContent = message;
+                messageDiv.appendChild(bubbleDiv);
+                aiChatMessages.appendChild(messageDiv);
+                aiChatMessages.scrollTop = aiChatMessages.scrollHeight; // Scroll to bottom
+            };
+
+            const handleAIChat = () => {
+                const userInput = aiChatInput.value.trim();
+                if (userInput) {
+                    addMessageToChat(userInput, true);
+                    aiChatInput.value = '';
+
+                    // Mock AI Response
+                    setTimeout(() => {
+                        let aiResponse = "I'm processing your request...";
+                        if (userInput.toLowerCase().includes("hello") || userInput.toLowerCase().includes("hi")) {
+                            aiResponse = "Hello there! How can I assist with your travel plans today?";
+                        } else if (userInput.toLowerCase().includes("cox's bazar") || userInput.toLowerCase().includes("coxs bazar")) {
+                            aiResponse = "Sure! I found 3 packages for Cox's Bazar starting from $120. Would you like to see details?";
+                        } else if (userInput.toLowerCase().includes("visa")) {
+                            aiResponse = "For visa information, please specify the country you're planning to visit and your nationality.";
+                        } else if (userInput.toLowerCase().includes("thanks") || userInput.toLowerCase().includes("thank you")) {
+                            aiResponse = "You're welcome! Let me know if there's anything else.";
+                        } else {
+                            aiResponse = "I'm still learning! For complex queries, try to be more specific or check our FAQ.";
+                        }
+                        addMessageToChat(aiResponse, false);
+                    }, 1000);
+                }
+            };
+            
+            aiChatSend.addEventListener('click', handleAIChat);
+            aiChatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    handleAIChat();
+                }
+            });
+        }
+
+        // Adjust styles for sticky elements based on header height
+        // This is a common pattern if you have multiple sticky elements below a sticky header
+        const headerHeight = document.getElementById('mainHeader')?.offsetHeight || 70; // Default height
+        const stickyElements = [leftSidebar, document.getElementById('rightSidebar')];
+        stickyElements.forEach(el => {
+            if (el) {
+                el.style.top = `${headerHeight + 16}px`; // 16px for some spacing
+                el.style.height = `calc(100vh - ${headerHeight + 16}px)`;
+            }
+        });
+
+        // Initial check for desktop sidebar toggle icon state
+        if (desktopToggleLeftSidebar && leftSidebar && desktopToggleLeftSidebarIconOpen && desktopToggleLeftSidebarIconClose) {
+            if (leftSidebar.classList.contains('lg:w-0')) { // If initially collapsed
+                desktopToggleLeftSidebarIconOpen.classList.add('hidden');
+                desktopToggleLeftSidebarIconClose.classList.remove('hidden');
+            } else {
+                desktopToggleLeftSidebarIconOpen.classList.remove('hidden');
+                desktopToggleLeftSidebarIconClose.classList.add('hidden');
+            }
+        }
+
+    </script>
+
+</body>
+</html>

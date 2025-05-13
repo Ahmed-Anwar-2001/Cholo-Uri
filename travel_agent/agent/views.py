@@ -22,6 +22,9 @@ def home(request):
     return render(request, 'home\home.html')
 
 
+def feed(request):
+    return render(request, "dashboard\\feed.html")
+
 # views.py
 
 
@@ -72,7 +75,7 @@ def login(request):
         next_url = request.GET.get('next', '')
         if next_url and url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}):
             return redirect(next_url)
-        return redirect('home')
+        return redirect('feed')
 
     # GET
     return render(request, 'auth/login.html')

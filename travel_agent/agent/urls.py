@@ -8,5 +8,8 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('logout/', views.logout, name='logout'),
 
+
+    path('feed/', views.feed, name="feed"),
+
     path('api/chat/stream/', views.agentic_chat, name='agentic_chat'),
 ]
